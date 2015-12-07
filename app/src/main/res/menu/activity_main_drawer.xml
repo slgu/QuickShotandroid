@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_mainFragment"
+            android:icon="@android:drawable/ic_menu_agenda"
+            android:title="@string/main_page" />
+        <item
+            android:id="@+id/nav_searchFriends"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="@string/search_friends" />
+        <item
+            android:id="@+id/nav_searchTopics"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="@string/search_topics" />
+        <item
+            android:id="@+id/nav_createTopics"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/create_topics" />
+    </group>
+
+</menu>

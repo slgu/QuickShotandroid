@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+
+        <!--android:src="@mipmap/ic_launcher"-->
+
+
+    <TextView
+        android:padding="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listText"
+        android:text="Dummy text"
+        android:textAppearance="?android:textAppearanceLarge"
+        />
+
+    <TextView
+        android:padding="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemLat"
+        android:text="Latitude Text"
+        android:layout_below="@id/listText"
+/>
+
+    <TextView
+        android:padding="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemLon"
+        android:text="Longitude Text"
+        android:layout_below="@id/listText"
+        android:layout_toRightOf="@id/itemLat"/>
+</RelativeLayout>

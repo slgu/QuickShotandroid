@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title:"
+        android:id="@+id/tvTitle"
+        android:textSize="18sp"
+        android:layout_marginRight="24dp"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tvTitle"
+        android:text="Some title"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description:"
+        android:id="@+id/tvDescribe"
+        android:textSize="18sp"
+        android:layout_marginRight="24dp"
+        android:layout_below="@id/tvTitle"
+        />
+
+    <TextView
+        android:id="@+id/describe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="free free pizza"
+        android:layout_below="@id/tvTitle"
+        android:layout_toRightOf="@+id/tvDescribe"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Like:"
+        android:id="@+id/tvLike"
+        android:textSize="18sp"
+        android:layout_marginRight="24dp"
+        android:layout_below="@id/tvDescribe"
+        />
+
+    <TextView
+        android:id="@+id/like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="999"
+        android:layout_below="@id/tvDescribe"
+        android:layout_toRightOf="@+id/tvLike"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video:"
+        android:id="@+id/tvVideo"
+        android:textSize="18sp"
+        android:layout_marginRight="24dp"
+        android:layout_below="@id/tvLike"
+        />
+
+    <TextView
+        android:id="@+id/video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VIDEO"
+        android:layout_below="@id/tvLike"
+        android:layout_toRightOf="@+id/tvVideo"
+        android:textSize="18sp"
+        />
+
+    <VideoView
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:id="@+id/videoView"
+        android:layout_below="@id/video"
+        android:layout_marginTop="24dp" />
+</RelativeLayout>

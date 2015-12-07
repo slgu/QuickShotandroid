@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    android:layout_width="match_parent"
+    android:background="@drawable/blue"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textColor="@drawable/white"
+        android:layout_marginTop="60dp"
+        android:gravity="center"
+        android:layout_gravity="left"/>
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@drawable/pureWhite"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textColor="@drawable/white"
+        android:layout_gravity="left"/>
+    <EditText
+        android:id="@+id/etPassword"
+        android:inputType="textPassword"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@drawable/pureWhite"/>
+    <Button
+        android:id="@+id/bLogin"
+        android:text="Login"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lightBlue"
+        android:textColor="@drawable/gray"/>
+    <TextView
+
+        android:id="@+id/tvRegisterLink"
+        android:layout_marginTop="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="New User? Sign up here."
+        android:textColor="@drawable/pureWhite"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
