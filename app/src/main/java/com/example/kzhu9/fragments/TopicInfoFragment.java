@@ -55,6 +55,5 @@ public class TopicInfoFragment extends Fragment {
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
-
     }
 }

@@ -7,5 +7,4 @@ import android.view.View;
  */
 public interface FriendItemClickListener {
     void onItemClick(View view, int position);
-
 }

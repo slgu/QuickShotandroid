@@ -119,8 +119,6 @@ public class CreateTopicsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
-
         bSubmit = (Button) rootview.findViewById(R.id.submit);
         bUploadVideo = (Button) rootview.findViewById(R.id.button_uploadVideo);
 

@@ -32,8 +32,6 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
-
         mManager = getFragmentManager();
 
         Button friendsButton = (Button) rootview.findViewById(R.id.friendsButton);

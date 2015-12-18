@@ -56,8 +56,6 @@ public class NotificationFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
-
         String requestURL;
         final ProgressDialog pd;
 

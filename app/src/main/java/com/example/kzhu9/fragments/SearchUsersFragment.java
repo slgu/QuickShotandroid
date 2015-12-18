@@ -3,27 +3,29 @@ package com.example.kzhu9.fragments;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.FriendItems;
 import com.example.kzhu9.myapplication.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
@@ -150,6 +152,21 @@ public class SearchUsersFragment extends Fragment {
                                     pd.dismiss();
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), friendResults));
                                     search.clearFocus();
+
+
+                                    searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            Log.i("CCCC", "----------");
+
+                                            Intent intent = new Intent(getActivity(), FriendInfo.class);
+
+                                            intent.putExtra("NAME", friendResults.get(position).getName());
+                                            intent.putExtra("EMAIL", friendResults.get(position).getEmail());
+
+                                            startActivity(intent);
+                                        }
+                                    });
                                 }
                             });
                         } catch (JSONException e) {
@@ -242,31 +259,6 @@ public class SearchUsersFragment extends Fragment {
             String strSex = (tempFriend.getSex() == 0) ? "Male" : "female";
             holder.friend_sex.setText(strSex);
             holder.friend_email.setText(tempFriend.getEmail());
-
-            holder.itself.setOnClickListener(new Button.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    View popupView = layoutInflater.inflate(R.layout.friends_popup, null);
-                    final PopupWindow popupWindow = new PopupWindow(
-                            popupView,
-                            LayoutParams.WRAP_CONTENT,
-                            LayoutParams.WRAP_CONTENT,
-                            false);
-
-                    Button btnDismiss = (Button) popupView.findViewById(R.id.dismiss);
-                    btnDismiss.setOnClickListener(new Button.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // TODO Auto-generated method stub
-                            popupWindow.dismiss();
-                        }
-                    });
-
-                    // click elsewhere to close the popWindow
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.showAsDropDown(holder.itself, 50, -30);
-                }
-            });
 
             holder.add_friend.setOnClickListener(new Button.OnClickListener() {
                 @Override

@@ -171,7 +171,8 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     .post(formBody)
                     .build();
 
-            OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
+            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
+
                 @Override
                 public void onFailure(Request request, IOException throwable) {
                     getActivity().runOnUiThread(new Runnable() {

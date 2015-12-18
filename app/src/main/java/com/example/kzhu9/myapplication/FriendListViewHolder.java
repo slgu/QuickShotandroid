@@ -4,12 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-
 /**
  * Created by jinliang on 12/2/15.
  */
 class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
     TextView nameText;
     TextView latText;
     TextView lonText;
@@ -22,7 +20,6 @@ class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         latText = (TextView) itemView.findViewById(R.id.itemLat);
         lonText = (TextView) itemView.findViewById(R.id.itemLon);
 
-
         this.mListener = listener;
         this.mLongClickListener = longClickListener;
         itemView.setOnClickListener(this);
@@ -34,7 +31,6 @@ class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         if(mListener != null) {
             mListener.onItemClick(v, getAdapterPosition());
         }
-
     }
 
     @Override
