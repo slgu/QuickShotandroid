@@ -1,16 +1,17 @@
 package com.example.kzhu9.fragments;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -43,12 +44,11 @@ import java.util.ArrayList;
 
 public class SearchTopicsFragment extends Fragment {
     SearchView search;
+    View map;
     ListView searchResults;
     View rootview;
     //This arraylist will have data as pulled from server. This will keep cumulating.
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
-    //Based on the search string, only filtered products will be moved here from productResults
-    ArrayList<TopicItems> filteredTopicResults = new ArrayList<TopicItems>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,9 +59,11 @@ public class SearchTopicsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_search, menu);
+        inflater.inflate(R.menu.main_map, menu);
 
         search = (SearchView) menu.findItem(R.id.action_search).getActionView();
         search.setQueryHint("Search Topics...");
+        search.setIconifiedByDefault(false);
 
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchtopics);
 
@@ -83,7 +85,7 @@ public class SearchTopicsFragment extends Fragment {
                 pd.show();
 
                 // Step 2. Get data
-                requestURL = Config.REQUESTURL+"/topic/find";
+                requestURL = Config.REQUESTURL + "/topic/find";
                 RequestBody formBody = new FormEncodingBuilder()
                         .add("desc", newText)
                         .build();
@@ -107,10 +109,20 @@ public class SearchTopicsFragment extends Fragment {
 
                     @Override
                     public void onResponse(Response response) throws IOException {
-                        if (!response.isSuccessful())
+                        if (!response.isSuccessful()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                            // need to re-login
                             throw new IOException("Unexpected code " + response);
+                        }
 
                         String responseStr = response.body().string();
+                        System.out.println(responseStr);
                         try {
                             topicList = new JSONArray(responseStr);
                             System.out.print(topicList.length());
@@ -123,8 +135,8 @@ public class SearchTopicsFragment extends Fragment {
 
                                 JSONObject obj = topicList.getJSONObject(i);
 
-                                tempTopic.setName(obj.getString("name"));
-                                tempTopic.setDescription(obj.getString("description"));
+                                tempTopic.setName(obj.getString("title"));
+                                tempTopic.setDescription(obj.getString("desc"));
 
                                 topicResults.add(tempTopic);
                             }
@@ -160,6 +172,18 @@ public class SearchTopicsFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.action_map:
+                // replace current fragment with map
+                System.out.println("123");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Nullable

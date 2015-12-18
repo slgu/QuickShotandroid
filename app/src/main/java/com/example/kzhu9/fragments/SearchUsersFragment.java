@@ -1,6 +1,6 @@
 package com.example.kzhu9.fragments;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -115,8 +115,16 @@ public class SearchUsersFragment extends Fragment {
                     public void onResponse(Response response) throws IOException {
                         pd.dismiss();
 
-                        if (!response.isSuccessful())
+                        if (!response.isSuccessful()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            // need to re-login
                             throw new IOException("Unexpected code " + response);
+                        }
 
                         String responseStr = response.body().string();
                         System.out.println(responseStr);
