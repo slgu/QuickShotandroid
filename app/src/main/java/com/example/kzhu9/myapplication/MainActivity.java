@@ -1,6 +1,7 @@
 package com.example.kzhu9.myapplication;
 
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentManager;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +23,7 @@ import com.example.kzhu9.fragments.NotificationFragment;
 import com.example.kzhu9.fragments.SearchTopicsFragment;
 import com.example.kzhu9.fragments.SearchUsersFragment;
 
-public class MainContent extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
@@ -41,7 +42,7 @@ public class MainContent extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
     }
 
@@ -74,6 +75,8 @@ public class MainContent extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         ImageView imgView = (ImageView) findViewById(R.id.imageView);
+
+        // personal profile ??????????????????
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,14 +93,14 @@ public class MainContent extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         int id = item.getItemId();
 
-//        if (id == R.id.action_settings) {
-//            Intent intent = new Intent(this, SettingsActivity.class);
-//            startActivity(intent);
-//            return true;
-//        }
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -107,7 +110,7 @@ public class MainContent extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
 
         int id = item.getItemId();
 

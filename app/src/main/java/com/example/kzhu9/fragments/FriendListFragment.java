@@ -1,9 +1,11 @@
 package com.example.kzhu9.fragments;
 
-import android.app.Fragment;
+/// /import android.app.Fragment;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,7 +43,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     private RecyclerView recyclerView;
     private FriendListAdapter adapter;
 
-    final ArrayList<FriendList.FriendEntity> friList = new ArrayList<>();
+    final ArrayList<FriendList.FriendEntity> friList = new ArrayList<FriendList.FriendEntity>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -175,14 +177,15 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+                    JSONObject friendList;
+                    JSONObject info;
 
                     try {
-
                         FriendList.FriendEntity friendEntity = new FriendList.FriendEntity();
 
-                        JSONObject friendList = new JSONObject(responseStr);
-                        System.out.print(friendList);
-                        JSONObject info = friendList.getJSONObject("info");
+                        friendList = new JSONObject(responseStr);
+                        //System.out.print(friendList);
+                        info = friendList.getJSONObject("info");
 
                         friendEntity.setName(info.getString("name"));
                         friendEntity.setAge(info.getInt("age"));
@@ -190,11 +193,9 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                         friList.add(friendEntity);
 
-
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 if (friList.size() == size) {
                                     adapter.setList(friList);
                                 }

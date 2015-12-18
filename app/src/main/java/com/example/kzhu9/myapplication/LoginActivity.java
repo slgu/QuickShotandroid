@@ -50,6 +50,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String password = etPassword.getText().toString();
                 String requestURL = Config.REQUESTURL  + "/user/login";
 
+//                System.out.println(username.toString());
+//
+//                if (password.equals(null) || username.equals(null)) {
+//                    Toast.makeText(getApplicationContext(), "Please input username/password", Toast.LENGTH_LONG).show();
+//                }
+
                 RequestBody formBody = new FormEncodingBuilder()
                         .add("username", username)
                         .add("passwd", password)
@@ -59,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .post(formBody)
                         .build();
 
+
                 OkHttpSingleton.getInstance().getClient(getApplicationContext()).newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException throwable) {
@@ -67,26 +74,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     @Override
                     public void onResponse(Response response) throws IOException {
-                        if (!response.isSuccessful())
+                        if (!response.isSuccessful()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                                }
+                            });
                             throw new IOException("Unexpected code " + response);
+                        }
 
                         String responseStr = response.body().string();
                         try {
                             JSONObject jsonObject = new JSONObject(responseStr);
-                            if (jsonObject.getInt("status")==0) {
-                                Config.user_id = jsonObject.getString("uid");
-                                // Jump to the main page
-                                startActivity(new Intent(LoginActivity.this, MainContent.class));
-                                // Finish activity after the back button is pressed
-                                finish();
-                            } else {
-                                // Invalid User
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(), "Invalid User!", Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                            //change it here
+
+                            switch (jsonObject.getInt("status")) {
+                                case 0:
+                                    Config.user_id = jsonObject.getString("uid");
+                                    // Jump to the main page
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    // Finish activity after the back button is pressed
+                                    finish();
+                                    break;
+                                default:
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "Password incorrect!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    break;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -100,7 +118,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
                 break;
             case R.id.tvRegisterLink:
-
                 startActivity(new Intent(this, RegisterActivity.class));
 
                 break;
