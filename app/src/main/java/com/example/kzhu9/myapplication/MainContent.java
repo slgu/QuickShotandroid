@@ -18,10 +18,9 @@ import android.widget.Toast;
 
 import com.example.kzhu9.fragments.CreateTopicsFragment;
 import com.example.kzhu9.fragments.MainFragment;
+import com.example.kzhu9.fragments.NotificationFragment;
 import com.example.kzhu9.fragments.SearchTopicsFragment;
 import com.example.kzhu9.fragments.SearchUsersFragment;
-
-
 
 public class MainContent extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -120,11 +119,12 @@ public class MainContent extends AppCompatActivity
             fm.beginTransaction().replace(R.id.content_frame, new SearchTopicsFragment()).commit();
         } else if (id == R.id.nav_createTopics) {
             fm.beginTransaction().replace(R.id.content_frame, new CreateTopicsFragment()).commit();
+        } else if (id == R.id.nav_notifications) {
+            fm.beginTransaction().replace(R.id.content_frame, new NotificationFragment()).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
 
         return true;
     }

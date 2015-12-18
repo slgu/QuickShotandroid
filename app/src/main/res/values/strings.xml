@@ -12,6 +12,7 @@
     <string name="search_friends">Search Friends</string>
     <string name="search_topics">Search Topics</string>
     <string name="create_topics">Create Topics</string>
+    <string name="notifications">Notifications</string>
     <string name="topic_title">topic title</string>
     <string name="topic_description">topic description</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

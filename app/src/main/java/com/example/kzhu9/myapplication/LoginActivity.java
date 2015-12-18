@@ -1,6 +1,5 @@
 package com.example.kzhu9.myapplication;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -49,7 +48,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.bLogin:
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                Context context = getApplicationContext();
                 String requestURL = Config.REQUESTURL  + "/user/login";
 
                 RequestBody formBody = new FormEncodingBuilder()
@@ -79,8 +77,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 Config.user_id = jsonObject.getString("uid");
                                 // Jump to the main page
                                 startActivity(new Intent(LoginActivity.this, MainContent.class));
-                                // Log out
-
                                 // Finish activity after the back button is pressed
                                 finish();
                             } else {

@@ -137,6 +137,7 @@ public class SearchTopicsFragment extends Fragment {
                                 public void run() {
                                     pd.dismiss();
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    search.clearFocus();
                                 }
                             });
                         } catch (JSONException e) {
@@ -151,7 +152,6 @@ public class SearchTopicsFragment extends Fragment {
                     }
                 });
 
-
                 System.out.println("on query submit: " + newText);
                 return true;
             }
@@ -163,7 +163,6 @@ public class SearchTopicsFragment extends Fragment {
                 return true;
             }
         });
-
     }
 
     @Nullable

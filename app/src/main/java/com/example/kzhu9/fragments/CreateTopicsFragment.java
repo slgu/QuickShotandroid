@@ -185,7 +185,6 @@ public class CreateTopicsFragment extends Fragment {
                         .post(requestBody)
                         .build();
 
-//                AsyncOkHttpClient.get(requestURL, );
 
                 OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
                     @Override
@@ -229,7 +228,6 @@ public class CreateTopicsFragment extends Fragment {
             }
         });
     }
-
 
     @Nullable
     @Override

@@ -35,7 +35,6 @@ public class TopicListViewHolder extends RecyclerView.ViewHolder implements View
         if(mListener != null) {
             mListener.onItemClick(v, getAdapterPosition());
         }
-
     }
 
     @Override

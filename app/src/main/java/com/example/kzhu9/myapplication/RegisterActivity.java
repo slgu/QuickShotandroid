@@ -120,7 +120,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                             }
 
-
                             Gson gson = new Gson();
                             JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
                             int status = Integer.parseInt(responseJsonObject.get("status").toString());

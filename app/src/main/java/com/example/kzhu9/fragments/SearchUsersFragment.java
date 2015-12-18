@@ -27,6 +27,8 @@ import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.FriendItems;
 import com.example.kzhu9.myapplication.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -115,9 +117,9 @@ public class SearchUsersFragment extends Fragment {
                             throw new IOException("Unexpected code " + response);
 
                         String responseStr = response.body().string();
+                        System.out.println(responseStr);
                         try {
                             friendList = new JSONArray(responseStr);
-                            System.out.print(friendList.length());
                             FriendItems tempFriend;
 
                             if (!friendResults.isEmpty())
@@ -134,7 +136,11 @@ public class SearchUsersFragment extends Fragment {
                                 tempFriend.setTopicList(obj.getString("topics_list"));
                                 tempFriend.setFriendList(obj.getString("friends_list"));
 
-                                friendResults.add(tempFriend);
+                                // if the user is not friend yet
+
+                                if (obj.getString("friendTag").equals("0"))
+                                    friendResults.add(tempFriend);
+
                                 System.out.println(tempFriend.toString());
                             }
 
@@ -143,6 +149,7 @@ public class SearchUsersFragment extends Fragment {
                                 public void run() {
                                     pd.dismiss();
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), friendResults));
+                                    search.clearFocus();
                                 }
                             });
                         } catch (JSONException e) {
@@ -150,6 +157,7 @@ public class SearchUsersFragment extends Fragment {
                             e.printStackTrace();
                         }
 
+                        pd.dismiss();
                         Headers responseHeaders = response.headers();
                         for (int i = 0; i < responseHeaders.size(); i++) {
                             System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
@@ -242,7 +250,8 @@ public class SearchUsersFragment extends Fragment {
                     final PopupWindow popupWindow = new PopupWindow(
                             popupView,
                             LayoutParams.WRAP_CONTENT,
-                            LayoutParams.WRAP_CONTENT);
+                            LayoutParams.WRAP_CONTENT,
+                            false);
 
                     Button btnDismiss = (Button) popupView.findViewById(R.id.dismiss);
                     btnDismiss.setOnClickListener(new Button.OnClickListener() {
@@ -293,12 +302,32 @@ public class SearchUsersFragment extends Fragment {
 
                             String responseStr = response.body().string();
                             System.out.println(responseStr);
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getActivity(), "Successfully add " + " as friend!", Toast.LENGTH_LONG).show();
-                                }
-                            });
+
+                            Gson gson = new Gson();
+                            JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
+                            int status = Integer.parseInt(responseJsonObject.get("status").toString());
+                            String resultStr = null;
+                            switch (status) {
+                                case 0:
+                                    resultStr = "Successfully add " + tempFriend.getName().toString() + " as friend!";
+                                    break;
+                                case 1:
+                                    resultStr = "Server restarted! Need to login again!";
+                                    // terminate the app and relogin
+                                    break;
+                                case 4:
+                                    resultStr = "Already sent this user";
+                                    break;
+                            }
+                            if (resultStr != null) {
+                                final String tmp = resultStr;
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), tmp, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
                         }
                     });
                 }
