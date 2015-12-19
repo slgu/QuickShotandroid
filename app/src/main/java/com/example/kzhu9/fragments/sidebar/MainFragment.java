@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.sidebar;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

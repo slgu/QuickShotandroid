@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.main_tabs.main_tabs_info;
 
 import android.app.Fragment;
 import android.os.Bundle;

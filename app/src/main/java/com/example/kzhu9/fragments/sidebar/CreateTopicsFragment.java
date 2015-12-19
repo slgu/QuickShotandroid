@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.sidebar;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.OkHttpSingleton;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;

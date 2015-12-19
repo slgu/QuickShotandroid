@@ -8,5 +8,5 @@
         android:id="@+id/action_map"
         android:icon="@android:drawable/ic_menu_mapmode"
         android:title="@string/action_show_map"
-        app:showAsAction="ifRoom|collapseActionView" />
+        app:showAsAction="always" />
 </menu>

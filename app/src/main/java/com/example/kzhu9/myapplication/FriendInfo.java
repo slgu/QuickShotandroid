@@ -4,7 +4,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.kzhu9.fragments.FriendInfoFragment;
+import com.example.kzhu9.fragments.main_tabs.main_tabs_info.FriendInfoFragment;
 
 /**
  * Created by jinliang on 12/2/15.

@@ -4,7 +4,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.kzhu9.fragments.TopicInfoFragment;
+import com.example.kzhu9.fragments.main_tabs.main_tabs_info.TopicInfoFragment;
 
 public class TopicInfo extends AppCompatActivity {
 

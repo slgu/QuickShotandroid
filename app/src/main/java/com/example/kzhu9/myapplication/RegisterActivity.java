@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;

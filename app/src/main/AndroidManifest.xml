@@ -58,9 +58,6 @@
         <activity
             android:name=".TopicInfo"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainFragmentActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

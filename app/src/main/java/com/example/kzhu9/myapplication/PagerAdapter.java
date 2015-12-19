@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.kzhu9.fragments.FriendListFragment;
-import com.example.kzhu9.fragments.LikedTopicListFragment;
-import com.example.kzhu9.fragments.TopicListFragment;
+import com.example.kzhu9.fragments.main_tabs.FriendListFragment;
+import com.example.kzhu9.fragments.main_tabs.LikedTopicListFragment;
+import com.example.kzhu9.fragments.main_tabs.TopicListFragment;
 
 
 /**

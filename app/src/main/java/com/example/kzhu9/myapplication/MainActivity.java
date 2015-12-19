@@ -1,12 +1,12 @@
 package com.example.kzhu9.myapplication;
 
-import android.support.v4.app.FragmentManager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,14 +14,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.kzhu9.fragments.CreateTopicsFragment;
-import com.example.kzhu9.fragments.MainFragment;
-import com.example.kzhu9.fragments.NotificationFragment;
-import com.example.kzhu9.fragments.SearchTopicsFragment;
-import com.example.kzhu9.fragments.SearchUsersFragment;
+import com.example.kzhu9.fragments.sidebar.CreateTopicsFragment;
+import com.example.kzhu9.fragments.sidebar.MainFragment;
+import com.example.kzhu9.fragments.sidebar.NotificationFragment;
+import com.example.kzhu9.fragments.sidebar.SearchTopicsFragment;
+import com.example.kzhu9.fragments.sidebar.SearchUsersFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -70,20 +71,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    static Button notifCount;
+    static int mNotifCount = 0;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        ImageView imgView = (ImageView) findViewById(R.id.imageView);
+        ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
 
         // personal profile ??????????????????
-        imgView.setOnClickListener(new View.OnClickListener() {
+        profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), ScrollingActivity.class);
                 startActivity(intent);
             }
         });
+
+        MenuItem item = menu.findItem(R.id.badge);
+        MenuItemCompat.setActionView(item, R.layout.feed_update_count);
+        notifCount = (Button) MenuItemCompat.getActionView(item);
+
+        // change notification number
+        notifCount.setText(String.valueOf(mNotifCount));
 
         return true;
     }

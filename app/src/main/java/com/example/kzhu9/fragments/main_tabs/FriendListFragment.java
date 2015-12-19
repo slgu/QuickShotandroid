@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.main_tabs;
 
 /// /import android.app.Fragment;
 
@@ -8,20 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.OkHttpSingleton;
+import com.example.kzhu9.myapplication.FriendInfo;
+import com.example.kzhu9.myapplication.FriendItemClickListener;
+import com.example.kzhu9.myapplication.FriendItemLongClickListener;
+import com.example.kzhu9.myapplication.FriendList;
+import com.example.kzhu9.myapplication.FriendListAdapter;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
-import com.example.kzhu9.myapplication.TopicInfo;
-import com.example.kzhu9.myapplication.TopicItemClickListener;
-import com.example.kzhu9.myapplication.TopicItemLongClickListener;
-import com.example.kzhu9.myapplication.TopicList;
-import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -39,11 +38,11 @@ import java.util.ArrayList;
 /**
  * Created by jinliang on 11/15/15.
  */
-
-public class TopicListFragment extends Fragment implements TopicItemClickListener, TopicItemLongClickListener {
+public class FriendListFragment extends Fragment implements FriendItemClickListener, FriendItemLongClickListener {
     private RecyclerView recyclerView;
-    private TopicListAdapter adapter;
-    final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
+    private FriendListAdapter adapter;
+
+    final ArrayList<FriendList.FriendEntity> friList = new ArrayList<FriendList.FriendEntity>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,9 +53,9 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_topic_listview, container, false);
+        View view = inflater.inflate(R.layout.fragment_listview, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.topicList);
+        recyclerView = (RecyclerView) view.findViewById(R.id.friendList);
         return view;
     }
 
@@ -64,7 +63,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        adapter = new TopicListAdapter(getActivity().getApplicationContext());
+        adapter = new FriendListAdapter(getActivity().getApplicationContext());
 
         adapter.setOnItemClickListener(this);
         adapter.setOnItemLongClickListener(this);
@@ -84,13 +83,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
         recyclerView.setHasFixedSize(true);
 
-        getTopicUidList();
-
-    }
-
-
-    private void getTopicUidList() {
-        String requestURL =  Config.REQUESTURL+"/user/get";
+        String requestURL = Config.REQUESTURL + "/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
                 .add("uid", Config.user_id)
@@ -122,18 +115,15 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
-                    System.out.println("Topic List Fragment Get Data");
-                    System.out.println(responseObj);
                     JSONObject info = responseObj.getJSONObject("info");
-                    JSONArray topicsList = info.getJSONArray("topics_list");
+                    JSONArray friendsListObj = info.getJSONArray("friends_list");
 
                     ArrayList<String> uidList = new ArrayList<>();
 
-                    for (int i = 0; i < topicsList.length(); i++) {
-
-                        uidList.add(topicsList.getString(i));
+                    for (int i = 0; i < friendsListObj.length(); i++) {
+                        uidList.add(friendsListObj.getString(i));
                     }
-                    getTopicList(uidList);
+                    getFriendList(uidList);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -147,12 +137,11 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
         });
     }
 
+    public void getFriendList(ArrayList<String> friendUidList) {
+        final int size = friendUidList.size();
 
-    public void getTopicList(ArrayList<String> topicUidList) {
-        final int size = topicUidList.size();
-
-        for (String uid : topicUidList) {
-            String requestURL = Config.REQUESTURL + "/topic/get";
+        for (String uid : friendUidList) {
+            String requestURL = Config.REQUESTURL + "/user/get";
 
             RequestBody formBody = new FormEncodingBuilder()
                     .add("uid", uid)
@@ -162,8 +151,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     .post(formBody)
                     .build();
 
-            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
-
+            OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException throwable) {
                     getActivity().runOnUiThread(new Runnable() {
@@ -182,32 +170,29 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+                    JSONObject friendList;
+                    JSONObject info;
 
                     try {
+                        FriendList.FriendEntity friendEntity = new FriendList.FriendEntity();
 
-                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+                        friendList = new JSONObject(responseStr);
+                        //System.out.print(friendList);
+                        info = friendList.getJSONObject("info");
 
-                        JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("Topic List Fragment Render Data");
-                        System.out.println(responseObj);
+                        friendEntity.setName(info.getString("name"));
+                        friendEntity.setAge(info.getInt("age"));
+                        friendEntity.setAddress(info.getString("address"));
 
-                        JSONObject info = responseObj.getJSONObject("info");
-
-                        System.out.println(info);
-
-                        topicEntity.setTitle(info.getString("title"));
-                        topicEntity.setDescription(info.getString("desc"));
-                        topicEntity.setVideo_uid(info.getString("video_uid"));
-
-                        topiList.add(topicEntity);
+                        friList.add(friendEntity);
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                if (topiList.size() == size) {
-                                    adapter.setList(topiList);
+                                if (friList.size() == size) {
+                                    adapter.setList(friList);
                                 }
+
                             }
                         });
 
@@ -215,6 +200,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
 
                     Headers responseHeaders = response.headers();
                     for (int i = 0; i < responseHeaders.size(); i++) {
@@ -227,22 +213,18 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
     @Override
     public void onItemClick(View view, int position) {
+        Intent intent = new Intent(getActivity(), FriendInfo.class);
 
-        Log.i("KKKKKKKKK", "" + position);
-        Log.i("KKKKKKKKK", "" + topiList.get(position).getTitle());
-        Intent intent = new Intent(getActivity(), TopicInfo.class);
-
-        intent.putExtra("TITLE", topiList.get(position).getTitle());
-        intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
-        intent.putExtra("LIKE", topiList.get(position).getLike());
-        intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
+        intent.putExtra("NAME", friList.get(position).getName());
+        intent.putExtra("AGE", friList.get(position).getAge());
+        intent.putExtra("EMAIL", friList.get(position).getEmail());
+        intent.putExtra("ADDRESS", friList.get(position).getAddress());
 
         startActivity(intent);
     }
 
     @Override
     public void onItemLongClick(View view, int position) {
-        Log.i("KKKKKKKKK--------------", "" + position);
-
+        
     }
 }

@@ -1,7 +1,6 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.main_tabs.main_tabs_info;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,7 +17,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.OkHttpSingleton;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -37,7 +36,6 @@ import java.io.IOException;
  */
 public class TopicInfoFragment extends Fragment {
     View rootview;
-
     public static final String ARG_TITLE = "title";
     public static final String ARG_DESCRIPTION = "description";
     public static final String ARG_LIKE = "like";
@@ -51,12 +49,7 @@ public class TopicInfoFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //********************* Add Comment
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   PASS THE topic id to this varibale instead!!!!!!!!
-        //**********
         final String topicid = "1";
-        //**********
-
 
         final Button btComment;
         final EditText etComment;
@@ -68,9 +61,7 @@ public class TopicInfoFragment extends Fragment {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.btComment:
-                        Context context = getActivity();
                         String requestURL = Config.REQUESTURL + "/user/comment";
-                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!   Add the comment address here !!!!!!!!!!!!
 
                         RequestBody formBody = new FormEncodingBuilder()
                                 .add("topic_uid", topicid)
@@ -96,12 +87,13 @@ public class TopicInfoFragment extends Fragment {
                                 try {
                                     JSONObject jsonObject = new JSONObject(responseStr);
                                     if (jsonObject.getInt("status") == 0) {
-
-                                        //!!!!!!!!  refresh the page...
-                                        //!!!!!!!!
-                                        System.out.println("done adding comment");
-
-
+                                        // comment add successfully
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getActivity().getApplicationContext(), "Comment Added!", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
                                     } else {
                                         // Invalid User
                                         getActivity().runOnUiThread(new Runnable() {

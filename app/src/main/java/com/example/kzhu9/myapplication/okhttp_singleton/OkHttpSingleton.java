@@ -1,7 +1,8 @@
-package com.example.kzhu9.myapplication;
+package com.example.kzhu9.myapplication.okhttp_singleton;
 
 import android.content.Context;
 
+import com.example.kzhu9.myapplication.utilities.PersistentCookieStore;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.CookieManager;

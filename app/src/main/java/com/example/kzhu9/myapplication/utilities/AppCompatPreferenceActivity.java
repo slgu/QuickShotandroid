@@ -1,4 +1,4 @@
-package com.example.kzhu9.myapplication;
+package com.example.kzhu9.myapplication.utilities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

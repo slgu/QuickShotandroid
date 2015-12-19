@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.sidebar;
 
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.NotificationItems;
-import com.example.kzhu9.myapplication.OkHttpSingleton;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

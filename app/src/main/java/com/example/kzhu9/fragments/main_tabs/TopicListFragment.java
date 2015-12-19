@@ -1,4 +1,4 @@
-package com.example.kzhu9.fragments;
+package com.example.kzhu9.fragments.main_tabs;
 
 /// /import android.app.Fragment;
 
@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.OkHttpSingleton;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItemClickListener;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
  * Created by jinliang on 11/15/15.
  */
 
-public class LikedTopicListFragment extends Fragment implements TopicItemClickListener, TopicItemLongClickListener {
+public class TopicListFragment extends Fragment implements TopicItemClickListener, TopicItemLongClickListener {
     private RecyclerView recyclerView;
     private TopicListAdapter adapter;
     final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
@@ -79,15 +79,17 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
         recyclerView.setAdapter(adapter);
 
-//        Log.i("CCcCCCCCCC", "cccc");
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
 
-        //
+        getTopicUidList();
+
+    }
 
 
-        String requestURL = Config.REQUESTURL + "/user/like";
+    private void getTopicUidList() {
+        String requestURL =  Config.REQUESTURL+"/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
                 .add("uid", Config.user_id)
@@ -118,27 +120,19 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 String responseStr = response.body().string();
 
                 try {
-                    JSONArray responseArr = new JSONArray(responseStr);
-                    System.out.println("Liked Topic List Fragment Get And Render Data");
-                    System.out.println(responseArr);
+                    JSONObject responseObj = new JSONObject(responseStr);
+                    System.out.println("Topic List Fragment Get Data");
+                    System.out.println(responseObj);
+                    JSONObject info = responseObj.getJSONObject("info");
+                    JSONArray topicsList = info.getJSONArray("topics_list");
 
-                    for (int i = 0; i != responseArr.length(); i++) {
-                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+                    ArrayList<String> uidList = new ArrayList<>();
 
-                        JSONObject obj = responseArr.getJSONObject(i);
+                    for (int i = 0; i < topicsList.length(); i++) {
 
-                        topicEntity.setTitle(obj.getString("title"));
-                        topicEntity.setDescription(obj.getString("desc"));
-
-                        topiList.add(topicEntity);
+                        uidList.add(topicsList.getString(i));
                     }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setList(topiList);
-                        }
-                    });
+                    getTopicList(uidList);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -150,6 +144,84 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 }
             }
         });
+    }
+
+
+    public void getTopicList(ArrayList<String> topicUidList) {
+        final int size = topicUidList.size();
+
+        for (String uid : topicUidList) {
+            String requestURL = Config.REQUESTURL + "/topic/get";
+
+            RequestBody formBody = new FormEncodingBuilder()
+                    .add("uid", uid)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(requestURL)
+                    .post(formBody)
+                    .build();
+
+            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Request request, IOException throwable) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Toast.makeText(getActivity(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    throwable.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (!response.isSuccessful())
+                        throw new IOException("Unexpected code " + response);
+
+                    String responseStr = response.body().string();
+
+                    try {
+
+                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+
+                        JSONObject responseObj = new JSONObject(responseStr);
+                        System.out.println("Topic List Fragment Render Data");
+                        System.out.println(responseObj);
+
+                        JSONObject info = responseObj.getJSONObject("info");
+
+                        System.out.println(info);
+
+                        topicEntity.setTitle(info.getString("title"));
+                        topicEntity.setDescription(info.getString("desc"));
+                        topicEntity.setVideo_uid(info.getString("video_uid"));
+
+                        topiList.add(topicEntity);
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (topiList.size() == size) {
+                                    adapter.setList(topiList);
+                                }
+                            }
+                        });
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Headers responseHeaders = response.headers();
+                    for (int i = 0; i < responseHeaders.size(); i++) {
+                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -167,7 +239,5 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
     }
 
     @Override
-    public void onItemLongClick(View view, int position) {
-        Log.i("KKKKKKKKK--------------", "" + position);
-    }
+    public void onItemLongClick(View view, int position) {}
 }
