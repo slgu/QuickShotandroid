@@ -147,11 +147,8 @@ public class SearchUsersFragment extends Fragment {
                                 tempFriend.setFriendList(obj.getString("friends_list"));
 
                                 // if the user is not friend yet
-
                                 if (obj.getString("friendTag").equals("0"))
                                     friendResults.add(tempFriend);
-
-                                System.out.println(tempFriend.toString());
                             }
 
                             getActivity().runOnUiThread(new Runnable() {

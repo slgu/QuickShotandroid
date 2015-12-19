@@ -2,11 +2,13 @@ package com.example.kzhu9.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicItems;
@@ -44,10 +48,8 @@ import java.util.ArrayList;
 
 public class SearchTopicsFragment extends Fragment {
     SearchView search;
-    View map;
     ListView searchResults;
     View rootview;
-    //This arraylist will have data as pulled from server. This will keep cumulating.
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
 
     @Override
@@ -147,6 +149,20 @@ public class SearchTopicsFragment extends Fragment {
                                     pd.dismiss();
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
                                     search.clearFocus();
+
+                                    searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            Log.i("CCCC", "----------");
+
+                                            Intent intent = new Intent(getActivity(), FriendInfo.class);
+
+                                            intent.putExtra("NAME", topicResults.get(position).getName());
+                                            intent.putExtra("EMAIL", topicResults.get(position).getDescription());
+
+                                            startActivity(intent);
+                                        }
+                                    });
                                 }
                             });
                         } catch (JSONException e) {

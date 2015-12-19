@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
         recyclerView.setAdapter(adapter);
 
-        Log.i("CCcCCCCCCC", "cccc");
+//        Log.i("CCcCCCCCCC", "cccc");
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -115,16 +114,14 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                 String responseStr = response.body().string();
 
                 try {
-
-                    JSONObject friendList = new JSONObject(responseStr);
-                    System.out.print(friendList);
-                    JSONObject info = friendList.getJSONObject("info");
-                    JSONArray friendsList = info.getJSONArray("friends_list");
+                    JSONObject responseObj = new JSONObject(responseStr);
+                    JSONObject info = responseObj.getJSONObject("info");
+                    JSONArray friendsListObj = info.getJSONArray("friends_list");
 
                     ArrayList<String> uidList = new ArrayList<>();
 
-                    for (int i = 0; i < friendsList.length(); i++) {
-                        uidList.add(friendsList.getString(i));
+                    for (int i = 0; i < friendsListObj.length(); i++) {
+                        uidList.add(friendsListObj.getString(i));
                     }
                     getFriendList(uidList);
 
@@ -132,19 +129,15 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     e.printStackTrace();
                 }
 
-
                 Headers responseHeaders = response.headers();
                 for (int i = 0; i < responseHeaders.size(); i++) {
                     System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
             }
         });
-
     }
 
     public void getFriendList(ArrayList<String> friendUidList) {
-
-
         final int size = friendUidList.size();
 
         for (String uid : friendUidList) {
@@ -215,16 +208,11 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     }
                 }
             });
-
-
         }
-
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.i("KKKKKKKKK", "" + position);
-        Log.i("KKKKKKKKK", "" + friList.get(position).getEmail());
         Intent intent = new Intent(getActivity(), FriendInfo.class);
 
         intent.putExtra("NAME", friList.get(position).getName());
@@ -237,6 +225,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
     @Override
     public void onItemLongClick(View view, int position) {
-        Log.i("KKKKKKKKK--------------", "" + position);
+        
     }
 }

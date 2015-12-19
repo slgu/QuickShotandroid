@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.kzhu9.fragments.FriendListFragment;
+import com.example.kzhu9.fragments.LikedTopicListFragment;
 import com.example.kzhu9.fragments.TopicListFragment;
 
 
@@ -31,6 +32,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 Fragment tab2 = new TopicListFragment();
                 return tab2;
+            case 2:
+                Fragment tab3 = new LikedTopicListFragment();
+                return tab3;
             default:
                 return null;
         }

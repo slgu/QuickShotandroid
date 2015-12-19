@@ -37,8 +37,9 @@ public class MainFragment extends Fragment {
         rootview = inflater.inflate(R.layout.activity_main_fragment, container, false);
 
         TabLayout tabLayout = (TabLayout) rootview.findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Friends"));
-        tabLayout.addTab(tabLayout.newTab().setText("Topics"));
+        tabLayout.addTab(tabLayout.newTab().setText("My Friends"));
+        tabLayout.addTab(tabLayout.newTab().setText("My Topics"));
+        tabLayout.addTab(tabLayout.newTab().setText("Liked Topics"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) rootview.findViewById(R.id.pager);
