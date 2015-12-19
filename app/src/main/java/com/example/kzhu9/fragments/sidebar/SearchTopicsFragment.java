@@ -52,6 +52,7 @@ public class SearchTopicsFragment extends Fragment {
     ListView searchResults;
     View rootview;
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
+    JSONObject geoJsonObject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,12 +194,41 @@ public class SearchTopicsFragment extends Fragment {
         });
     }
 
+    public JSONObject arrayListToGeoJson(ArrayList<TopicItems> arrayList) {
+        JSONObject featureCollection = new JSONObject();
+        try {
+            featureCollection.put("type", "FeatureCollection");
+            JSONArray featureList = new JSONArray();
+            // iterate through your list
+            for (TopicItems obj : arrayList) {
+                JSONObject point = new JSONObject();
+                point.put("type", "Point");
+                // construct a JSONArray from a string; can also use an array or list
+                JSONArray coord = new JSONArray("["+obj.getLongitude()+","+obj.getLatitude()+"]");
+                point.put("coordinates", coord);
+                JSONObject feature = new JSONObject();
+                feature.put("geometry", point);
+                featureList.put(feature);
+                featureCollection.put("features", featureList);
+            }
+        } catch (JSONException e) {
+            //Log.i("can't save json object: "+e.toString());
+        }
+        // output the result
+        System.out.println("featureCollection="+featureCollection.toString());
+        return featureCollection;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.action_map:
                 // replace current fragment with map
                 Intent intent = new Intent(getActivity(), MapActivity.class);
+//                geoJsonObject = arrayListToGeoJson(topicResults);
+                intent.putExtra("TopicResults", topicResults);
+
+
                 startActivity(intent);
 
                 return true;
