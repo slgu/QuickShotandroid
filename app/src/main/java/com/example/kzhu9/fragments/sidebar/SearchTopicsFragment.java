@@ -25,9 +25,10 @@ import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.FriendInfo;
-import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
+import com.example.kzhu9.myapplication.MapActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicItems;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -139,6 +140,8 @@ public class SearchTopicsFragment extends Fragment {
 
                                 tempTopic.setName(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
+                                tempTopic.setLongitude(obj.getDouble("long"));
+                                tempTopic.setLatitude(obj.getDouble("lat"));
 
                                 topicResults.add(tempTopic);
                             }
@@ -195,7 +198,9 @@ public class SearchTopicsFragment extends Fragment {
         switch(item.getItemId()){
             case R.id.action_map:
                 // replace current fragment with map
-                System.out.println("123");
+                Intent intent = new Intent(getActivity(), MapActivity.class);
+                startActivity(intent);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

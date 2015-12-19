@@ -1,4 +1,4 @@
-package com.example.kzhu9.myapplication.utilities;/*
+package com.example.kzhu9.myapplication;/*
  * Copyright (c) 2015 Fran Montiel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

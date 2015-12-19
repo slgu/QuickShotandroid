@@ -1,4 +1,4 @@
-package com.example.kzhu9.myapplication.utilities;/*
+package com.example.kzhu9.myapplication;/*
  * Copyright (c) 2011 James Smith <james@loopj.com>
  * Copyright (c) 2015 Fran Montiel
  *

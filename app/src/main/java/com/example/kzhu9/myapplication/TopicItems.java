@@ -6,6 +6,8 @@ package com.example.kzhu9.myapplication;
 public class TopicItems {
     String name;
     String description;
+    double longitude, latitude;
+
     // how to implement audio and video
 
     public String getName() {
@@ -23,4 +25,11 @@ public class TopicItems {
     public void setDescription(String tempDescription) {
         this.description = tempDescription;
     }
+
+    public double getLongitude() { return this.longitude; }
+    public void setLongitude(double tempLongitude) { this.longitude = tempLongitude;}
+
+
+    public double getLatitude() { return this.latitude; }
+    public void setLatitude(double tempLatitude) { this.longitude = tempLatitude;}
 }
