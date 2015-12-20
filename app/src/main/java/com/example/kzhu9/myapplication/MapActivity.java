@@ -15,6 +15,5 @@ public class MapActivity extends AppCompatActivity {
 
        FragmentManager fm = getSupportFragmentManager();
        fm.beginTransaction().add(R.id.container, new MapViewFragment(), null).commit();
-
    }
 }

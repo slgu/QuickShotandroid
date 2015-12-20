@@ -24,11 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.FriendInfo;
-import com.example.kzhu9.myapplication.MapActivity;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -50,9 +51,11 @@ import java.util.ArrayList;
 public class SearchTopicsFragment extends Fragment {
     SearchView search;
     ListView searchResults;
+    MapView searchMap;
     View rootview;
+    GoogleMap map;
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
-    JSONObject geoJsonObject;
+    private int flag = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,13 +67,18 @@ public class SearchTopicsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_search, menu);
         inflater.inflate(R.menu.main_map, menu);
+//        if (flag == 0) {
+//            inflater.inflate(R.menu.main_map, menu);
+//        } else {
+//            inflater.inflate(R.menu.main_topic_list, menu);
+//        }
 
         search = (SearchView) menu.findItem(R.id.action_search).getActionView();
         search.setQueryHint("Search Topics...");
         search.setIconifiedByDefault(false);
 
+        searchMap = (MapView) rootview.findViewById(R.id.mapview_searchmap);
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchtopics);
-
         search.setOnQueryTextListener(new OnQueryTextListener() {
             JSONArray topicList;
             String requestURL;
@@ -78,6 +86,7 @@ public class SearchTopicsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String newText) {
+                searchMap.setVisibility(View.INVISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
 
                 // Step 1. pre execute show pd
@@ -126,10 +135,13 @@ public class SearchTopicsFragment extends Fragment {
                         }
 
                         String responseStr = response.body().string();
-                        System.out.println(responseStr);
+//                        System.out.println(responseStr);
                         try {
-                            topicList = new JSONArray(responseStr);
-                            System.out.print(topicList.length());
+                            JSONObject responseObj = new JSONObject(responseStr);
+                            System.out.println("Topic Search List Fragment Get Data");
+                            System.out.println(responseObj);
+                            topicList = responseObj.getJSONArray("info");
+
                             TopicItems tempTopic;
 
                             if (!topicResults.isEmpty())
@@ -141,8 +153,8 @@ public class SearchTopicsFragment extends Fragment {
 
                                 tempTopic.setName(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
-                                tempTopic.setLongitude(obj.getDouble("long"));
-                                tempTopic.setLatitude(obj.getDouble("lat"));
+                                tempTopic.setLongitude(obj.getString("lon"));
+                                tempTopic.setLatitude(obj.getString("lat"));
 
                                 topicResults.add(tempTopic);
                             }
@@ -159,10 +171,18 @@ public class SearchTopicsFragment extends Fragment {
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             Log.i("CCCC", "----------");
 
-                                            Intent intent = new Intent(getActivity(), FriendInfo.class);
+                                            Intent intent = new Intent(getActivity(), TopicInfo.class);
 
                                             intent.putExtra("NAME", topicResults.get(position).getName());
                                             intent.putExtra("EMAIL", topicResults.get(position).getDescription());
+
+//                                            intent.putExtra("UID", topicResults.get(position).getUid());
+//                                            intent.putExtra("TITLE", topicResults.get(position).getTitle());
+//                                            intent.putExtra("DESCRIPTION", topicResults.get(position).getDescription());
+//                                            intent.putExtra("LIKE", topicResults.get(position).getLike());
+//                                            intent.putExtra("VIDEO", topicResults.get(position).getVideo_uid());
+//                                            intent.putExtra("LAT", topicResults.get(position).getLat());
+//                                            intent.putExtra("LON", topicResults.get(position).getLon());
 
                                             startActivity(intent);
                                         }
@@ -204,32 +224,89 @@ public class SearchTopicsFragment extends Fragment {
                 JSONObject point = new JSONObject();
                 point.put("type", "Point");
                 // construct a JSONArray from a string; can also use an array or list
-                JSONArray coord = new JSONArray("["+obj.getLongitude()+","+obj.getLatitude()+"]");
+                JSONArray coord = new JSONArray("[" + obj.getLongitude() + "," + obj.getLatitude() + "]");
                 point.put("coordinates", coord);
                 JSONObject feature = new JSONObject();
                 feature.put("geometry", point);
+                feature.put("type", "Feature");
+
                 featureList.put(feature);
                 featureCollection.put("features", featureList);
+
             }
         } catch (JSONException e) {
             //Log.i("can't save json object: "+e.toString());
         }
         // output the result
-        System.out.println("featureCollection="+featureCollection.toString());
+        System.out.println("featureCollection=" + featureCollection.toString());
         return featureCollection;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+
         switch(item.getItemId()){
             case R.id.action_map:
                 // replace current fragment with map
-                Intent intent = new Intent(getActivity(), MapActivity.class);
-//                geoJsonObject = arrayListToGeoJson(topicResults);
-                intent.putExtra("TopicResults", topicResults);
+
+////              fake data
+                TopicItems topicItems = new TopicItems();
+                topicItems.setLatitude("40.776495");
+                topicItems.setLongitude("-73.972667");
+                topicResults.add(topicItems);
 
 
-                startActivity(intent);
+//                Bundle args = new Bundle();
+//                args.putParcelableArrayList("123", topicResults);
+
+//                MapViewFragment mapViewFragment = new MapViewFragment();
+//                mapViewFragment.setArguments(args);
+
+//                FragmentManager fm = getActivity().getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+
+                if (flag == 0) {
+//                    searchMap.setVisibility(View.VISIBLE);
+//                    searchResults.setVisibility(View.INVISIBLE);
+
+//                    fragmentTransaction.replace(R.id.mapview, mapViewFragment);
+//                    fragmentTransaction.addToBackStack(null);
+
+                    //Commit Transaction
+//                    fragmentTransaction.commit();
+
+//                    map = searchMap.getMap();
+//                    Log.i("123", map.toString());
+//                    map.getUiSettings().setMyLocationButtonEnabled(true);
+//                    map.setMyLocationEnabled(true);
+//                    MapsInitializer.initialize(this.getActivity());
+//                    CameraUpdate cameraUpdate = CameraUpdateFactory
+//                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
+//                    map.animateCamera(cameraUpdate);
+////                    Bundle bundle = getArguments();
+////                    ArrayList<TopicItems> t = new ArrayList<>();
+////                    t = bundle.getParcelableArrayList("123");
+//
+//                    JSONObject json = arrayListToGeoJson(topicResults);
+//
+//                    GeoJsonLayer layer = null;
+//                    layer = new GeoJsonLayer(map, json);
+//
+//                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
+//                    pointStyle.setTitle("Marker at Columbia University");
+//                    pointStyle.setIcon(BitmapDescriptorFactory
+//                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//                    pointStyle.setAnchor(0.1f, 0.1f);
+//
+//                    for (GeoJsonFeature feature : layer.getFeatures()) {
+//                        feature.setPointStyle(pointStyle);
+//                    }
+//                    layer.addLayerToMap();
+                } else {
+
+                }
+
+
 
                 return true;
             default:

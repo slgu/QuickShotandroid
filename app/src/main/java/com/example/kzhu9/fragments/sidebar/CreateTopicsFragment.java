@@ -31,6 +31,8 @@ import android.widget.Toast;
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
@@ -204,17 +206,43 @@ public class CreateTopicsFragment extends Fragment {
                         if (!response.isSuccessful())
                             throw new IOException("Unexpected code " + response);
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                pd.dismiss();
-                                Toast.makeText(getActivity(), "Upload successfully!", Toast.LENGTH_LONG).show();
-                            }
-                        });
-
                         String responseStr = response.body().string();
                         System.out.println(responseStr);
-                        System.out.println("Upload Successful!");
+
+                        Gson gson = new Gson();
+                        JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
+                        int status = Integer.parseInt(responseJsonObject.get("status").toString());
+
+                        String resultStr = null;
+                        switch (status) {
+                            case 0:
+                                resultStr = "Upload successfully!";
+                                break;
+                            case 1:
+                                // go back to login activity ???????????????
+                                break;
+                            case 2:
+                                resultStr = "Null parameter!";
+                                break;
+                            case 3:
+                                resultStr = "No location information!";
+                                break;
+                            case 4:
+                                resultStr = "Video type is incorrect!";
+                                break;
+                            case 5:
+                                resultStr = "Can't specify video uid!";
+                                break;
+                        }
+                        if (resultStr != null) {
+                            final String tmp = resultStr;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), tmp, Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
 
                         Headers responseHeaders = response.headers();
                         for (int i = 0; i < responseHeaders.size(); i++) {

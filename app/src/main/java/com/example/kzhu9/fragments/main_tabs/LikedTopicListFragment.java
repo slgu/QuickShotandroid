@@ -2,26 +2,23 @@ package com.example.kzhu9.fragments.main_tabs;
 
 /// /import android.app.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
-import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItemClickListener;
 import com.example.kzhu9.myapplication.TopicItemLongClickListener;
 import com.example.kzhu9.myapplication.TopicList;
 import com.example.kzhu9.myapplication.TopicListAdapter;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -154,20 +151,19 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.i("KKKKKKKKK", "" + position);
-        Log.i("KKKKKKKKK", "" + topiList.get(position).getTitle());
-        Intent intent = new Intent(getActivity(), TopicInfo.class);
-
-        intent.putExtra("TITLE", topiList.get(position).getTitle());
-        intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
-        intent.putExtra("LIKE", topiList.get(position).getLike());
-        intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
-
-        startActivity(intent);
+//        Intent intent = new Intent(getActivity(), TopicInfo.class);
+//
+//        intent.putExtra("UID", topiList.get(position).getUid());
+//        intent.putExtra("TITLE", topiList.get(position).getTitle());
+//        intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
+//        intent.putExtra("LIKE", topiList.get(position).getLike());
+//        intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
+//        intent.putExtra("LAT", topiList.get(position).getLat());
+//        intent.putExtra("LON", topiList.get(position).getLon());
+//
+//        startActivity(intent);
     }
 
     @Override
-    public void onItemLongClick(View view, int position) {
-        Log.i("KKKKKKKKK--------------", "" + position);
-    }
+    public void onItemLongClick(View view, int position) { }
 }

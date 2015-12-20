@@ -50,7 +50,7 @@ public class FriendList {
         private String name;
         private String passwd;
         private int sex;
-        private int age;
+        private String age;
         private String address;
         private ArrayList<String> friends_list;
         private ArrayList<String> topics_list;
@@ -75,7 +75,7 @@ public class FriendList {
             this.sex = sex;
         }
 
-        public void setAge(int age) {
+        public void setAge(String age) {
             this.age = age;
         }
 
@@ -111,7 +111,7 @@ public class FriendList {
             return sex;
         }
 
-        public int getAge() {
+        public String getAge() {
             return age;
         }
 

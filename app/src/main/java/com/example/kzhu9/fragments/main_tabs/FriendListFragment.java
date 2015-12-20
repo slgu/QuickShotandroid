@@ -1,7 +1,5 @@
 package com.example.kzhu9.fragments.main_tabs;
 
-/// /import android.app.Fragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,8 +17,8 @@ import com.example.kzhu9.myapplication.FriendItemClickListener;
 import com.example.kzhu9.myapplication.FriendItemLongClickListener;
 import com.example.kzhu9.myapplication.FriendList;
 import com.example.kzhu9.myapplication.FriendListAdapter;
-import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -47,7 +45,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        adapter = new FriendListAdapter();
     }
 
     @Nullable
@@ -68,17 +65,8 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         adapter.setOnItemClickListener(this);
         adapter.setOnItemLongClickListener(this);
 
-//
-//        recyclerView.addItemDecoration(
-//                new HorizontalDividerItemDecoration.Builder(getActivity())
-//                        .color(Color.RED)
-//                        .sizeResId(R.dimen.divider)
-//                        .marginResId(R.dimen.leftmargin, R.dimen.rightmargin)
-//                        .build());
-
         recyclerView.setAdapter(adapter);
 
-//        Log.i("CCcCCCCCCC", "cccc");
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -177,12 +165,13 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         FriendList.FriendEntity friendEntity = new FriendList.FriendEntity();
 
                         friendList = new JSONObject(responseStr);
-                        //System.out.print(friendList);
+                        System.out.print(friendList);
                         info = friendList.getJSONObject("info");
 
                         friendEntity.setName(info.getString("name"));
-                        friendEntity.setAge(info.getInt("age"));
+                        friendEntity.setAge(info.getString("age"));
                         friendEntity.setAddress(info.getString("address"));
+                        friendEntity.setEmail(info.getString("email"));
 
                         friList.add(friendEntity);
 
@@ -192,7 +181,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                                 if (friList.size() == size) {
                                     adapter.setList(friList);
                                 }
-
                             }
                         });
 
@@ -225,6 +213,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
     @Override
     public void onItemLongClick(View view, int position) {
-        
+
     }
 }
