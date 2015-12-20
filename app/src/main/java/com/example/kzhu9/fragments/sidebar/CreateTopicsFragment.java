@@ -2,7 +2,6 @@ package com.example.kzhu9.fragments.sidebar;
 
 import android.Manifest;
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,8 +29,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -137,7 +137,13 @@ public class CreateTopicsFragment extends Fragment {
             );
             return;
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        if (location!=null){
+//            longitude = location.getLongitude();
+//            latitude = location.getLatitude();
+//            //String locLat = String.valueOf(latitude)+","+String.valueOf(longitude);
+//        }
+
         longitude = location.getLongitude();
         latitude = location.getLatitude();
 

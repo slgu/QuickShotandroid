@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +27,8 @@ import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
+import com.example.kzhu9.myapplication.TopicList;
+import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -55,6 +57,8 @@ public class SearchTopicsFragment extends Fragment {
     View rootview;
     GoogleMap map;
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
+    final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
+    private TopicListAdapter adapter;
     private int flag = 0;
 
     @Override
@@ -135,7 +139,8 @@ public class SearchTopicsFragment extends Fragment {
                         }
 
                         String responseStr = response.body().string();
-//                        System.out.println(responseStr);
+                        System.out.println("topic find reponse format");
+                        System.out.println(responseStr);
                         try {
                             JSONObject responseObj = new JSONObject(responseStr);
                             System.out.println("Topic Search List Fragment Get Data");
@@ -151,10 +156,9 @@ public class SearchTopicsFragment extends Fragment {
 
                                 JSONObject obj = topicList.getJSONObject(i);
 
-                                tempTopic.setName(obj.getString("title"));
+                                tempTopic.setUid(obj.getString("uid"));
+                                tempTopic.setTitle(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
-                                tempTopic.setLongitude(obj.getString("lon"));
-                                tempTopic.setLatitude(obj.getString("lat"));
 
                                 topicResults.add(tempTopic);
                             }
@@ -169,20 +173,12 @@ public class SearchTopicsFragment extends Fragment {
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            Log.i("CCCC", "----------");
-
+                                            // topic/get
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
 
-                                            intent.putExtra("NAME", topicResults.get(position).getName());
-                                            intent.putExtra("EMAIL", topicResults.get(position).getDescription());
-
-//                                            intent.putExtra("UID", topicResults.get(position).getUid());
-//                                            intent.putExtra("TITLE", topicResults.get(position).getTitle());
-//                                            intent.putExtra("DESCRIPTION", topicResults.get(position).getDescription());
-//                                            intent.putExtra("LIKE", topicResults.get(position).getLike());
-//                                            intent.putExtra("VIDEO", topicResults.get(position).getVideo_uid());
-//                                            intent.putExtra("LAT", topicResults.get(position).getLat());
-//                                            intent.putExtra("LON", topicResults.get(position).getLon());
+                                            intent.putExtra("UID", topicResults.get(position).getUid());
+                                            intent.putExtra("TITLE", topicResults.get(position).getTitle());
+                                            intent.putExtra("DESC", topicResults.get(position).getDescription());
 
                                             startActivity(intent);
                                         }
@@ -364,6 +360,7 @@ public class SearchTopicsFragment extends Fragment {
                 convertView = layoutInflater.inflate(R.layout.searchtopicresult, null);
                 holder = new ViewHolder();
                 holder.itself = (RelativeLayout) convertView.findViewById(R.id.topicView);
+                holder.like_topic = (ImageView) convertView.findViewById(R.id.like_topic);
                 holder.topic_title = (TextView) convertView.findViewById(R.id.topic_title);
                 holder.topic_description = (TextView) convertView.findViewById(R.id.topic_description_value);
 
@@ -372,7 +369,7 @@ public class SearchTopicsFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.topic_title.setText(tempTopic.getName());
+            holder.topic_title.setText(tempTopic.getTitle());
             holder.topic_description.setText(tempTopic.getDescription());
 
             return convertView;
@@ -380,6 +377,7 @@ public class SearchTopicsFragment extends Fragment {
 
         class ViewHolder {
             RelativeLayout itself;
+            ImageView like_topic;
             TextView topic_title;
             TextView topic_description;
         }

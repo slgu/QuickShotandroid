@@ -6,7 +6,7 @@
     android:background="#FFFFFF">
 
     <ImageView
-        android:id="@+id/topicImage"
+        android:id="@+id/like_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/topicImage"
+        android:layout_toRightOf="@+id/like_topic"
         android:text="Topic Title"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000"
@@ -34,7 +34,7 @@
         android:layout_below="@+id/topic_title"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/topicImage"
+        android:layout_toRightOf="@+id/like_topic"
         android:text="Description:"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000"

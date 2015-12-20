@@ -47,7 +47,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        adapter = new FriendListAdapter();
     }
 
     @Nullable
@@ -120,7 +119,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     ArrayList<String> uidList = new ArrayList<>();
 
                     for (int i = 0; i < topicsList.length(); i++) {
-
                         uidList.add(topicsList.getString(i));
                     }
                     getTopicList(uidList);

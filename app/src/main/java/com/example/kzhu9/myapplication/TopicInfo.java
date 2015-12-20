@@ -70,7 +70,6 @@ public class TopicInfo extends AppCompatActivity {
         map.setMyLocationEnabled(true);
         MapsInitializer.initialize(this);
 
-
         System.out.println(latitude + " " + longitude);
 
         CameraUpdate cameraUpdate = CameraUpdateFactory

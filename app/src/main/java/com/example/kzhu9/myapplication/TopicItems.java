@@ -7,7 +7,8 @@ import android.os.Parcelable;
  * Created by kzhu9 on 11/25/15.
  */
 public class TopicItems implements Parcelable {
-    String name;
+    String uid;
+    String title;
     String description;
     String longitude, latitude;
 
@@ -18,7 +19,8 @@ public class TopicItems implements Parcelable {
     }
 
     protected TopicItems(Parcel in) {
-        name = in.readString();
+        uid = in.readString();
+        title = in.readString();
         description = in.readString();
         longitude = in.readString();
         latitude = in.readString();
@@ -36,12 +38,21 @@ public class TopicItems implements Parcelable {
         }
     };
 
-    public String getName() {
-        return this.name;
+
+    public String getUid() {
+        return this.uid;
     }
 
-    public void setName(String tempName) {
-        this.name = tempName;
+    public void setUid(String tempUid) {
+        this.uid = tempUid;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String tempTitle) {
+        this.title = tempTitle;
     }
 
     public String getDescription() {
@@ -66,7 +77,8 @@ public class TopicItems implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+        dest.writeString(uid);
+        dest.writeString(title);
         dest.writeString(description);
         dest.writeString(longitude);
         dest.writeString(latitude);
