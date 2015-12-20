@@ -22,6 +22,11 @@
             android:id="@+id/nav_notifications"
             android:icon="@android:drawable/ic_dialog_info"
             android:title="@string/notifications" />
+
+        <item
+            android:id="@+id/nav_recommendations"
+            android:icon="@android:drawable/ic_dialog_dialer"
+            android:title="@string/recommendations" />
     </group>
 
 </menu>

@@ -118,19 +118,11 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         JSONObject obj = responseArr.getJSONObject(i);
 
                         topicEntity.setUid(obj.getString("uid"));
-                        topicEntity.setTitle(obj.getString("title"));
-                        topicEntity.setDescription(obj.getString("desc"));
 
-                        topiList.add(topicEntity);
                         uidList.add(obj.getString("uid"));
                     }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setList(topiList);
-                        }
-                    });
+                    System.out.println("print uidList");
+                    System.out.println(uidList.toString());
 
                     getTopicList(uidList);
 

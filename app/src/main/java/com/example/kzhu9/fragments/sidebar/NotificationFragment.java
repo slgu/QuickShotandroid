@@ -209,7 +209,7 @@ public class NotificationFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.inviting_friend_name.setText(tempNotification.getName());
+            holder.inviting_friend_name.setText(tempNotification.getName() + " want to add you as friend.");
 
             holder.accept_invitation.setOnClickListener(new Button.OnClickListener() {
                 @Override

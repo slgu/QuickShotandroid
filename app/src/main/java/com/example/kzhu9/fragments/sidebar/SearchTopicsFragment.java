@@ -29,12 +29,19 @@ import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.TopicList;
-import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.maps.android.geojson.GeoJsonFeature;
+import com.google.maps.android.geojson.GeoJsonLayer;
+import com.google.maps.android.geojson.GeoJsonPointStyle;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -48,26 +55,27 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by kzhu9 on 11/7/15.
  */
 
 public class SearchTopicsFragment extends Fragment {
+    final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
     SearchView search;
     ListView searchResults;
     MapView searchMap;
     View rootview;
-    GoogleMap map;
-    ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
-    final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
-    private TopicListAdapter adapter;
+    GoogleMap googleMap;
+    ArrayList<TopicItems> topicResults = new ArrayList<>();
     private int flag = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -81,10 +89,13 @@ public class SearchTopicsFragment extends Fragment {
 //        }
 
         search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        search.setSubmitButtonEnabled(true);
+
         search.setQueryHint("Search Topics...");
-        search.setIconifiedByDefault(false);
+//        search.setIconifiedByDefault(false);
 
         searchMap = (MapView) rootview.findViewById(R.id.mapview_searchmap);
+
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchtopics);
         search.setOnQueryTextListener(new OnQueryTextListener() {
             JSONArray topicList;
@@ -152,6 +163,8 @@ public class SearchTopicsFragment extends Fragment {
 
                             TopicItems tempTopic;
 
+                            ArrayList<String> uidList = new ArrayList<>();
+
                             if (!topicResults.isEmpty())
                                 topicResults.clear();
                             for (int i = 0; i < topicList.length(); i++) {
@@ -163,8 +176,12 @@ public class SearchTopicsFragment extends Fragment {
                                 tempTopic.setTitle(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
 
+                                uidList.add(obj.getString("uid"));
+
                                 topicResults.add(tempTopic);
                             }
+
+                            getTopicList(uidList);
 
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -176,14 +193,16 @@ public class SearchTopicsFragment extends Fragment {
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            // topic/get
-
-
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
 
-                                            intent.putExtra("UID", topicResults.get(position).getUid());
-                                            intent.putExtra("TITLE", topicResults.get(position).getTitle());
-                                            intent.putExtra("DESC", topicResults.get(position).getDescription());
+                                            intent.putExtra("UID", topiList.get(position).getUid());
+                                            intent.putExtra("TITLE", topiList.get(position).getTitle());
+                                            intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
+                                            intent.putExtra("LIKE", topiList.get(position).getLike());
+                                            intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
+                                            intent.putExtra("LAT", topiList.get(position).getLat());
+                                            intent.putExtra("LON", topiList.get(position).getLon());
+                                            intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
 
                                             startActivity(intent);
                                         }
@@ -195,6 +214,7 @@ public class SearchTopicsFragment extends Fragment {
                             e.printStackTrace();
                         }
 
+                        pd.dismiss();
                         Headers responseHeaders = response.headers();
                         for (int i = 0; i < responseHeaders.size(); i++) {
                             System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
@@ -208,11 +228,85 @@ public class SearchTopicsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
+                searchResults.setVisibility(View.INVISIBLE);
                 System.out.println("on text chnge text: " + newText);
                 return true;
             }
         });
+    }
+
+    public void getTopicList(ArrayList<String> topicUidList) {
+        final int size = topicUidList.size();
+        System.out.println("this is topicUidList size.");
+        System.out.println(size);
+
+        for (String uid : topicUidList) {
+            String requestURL = Config.REQUESTURL + "/topic/get";
+
+            RequestBody formBody = new FormEncodingBuilder()
+                    .add("uid", uid)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(requestURL)
+                    .post(formBody)
+                    .build();
+
+            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Request request, IOException throwable) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Toast.makeText(getActivity(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    throwable.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (!response.isSuccessful())
+                        throw new IOException("Unexpected code " + response);
+
+                    String responseStr = response.body().string();
+
+                    try {
+
+                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+
+                        JSONObject responseObj = new JSONObject(responseStr);
+                        System.out.println("Topic List Fragment Render Data");
+                        System.out.println(responseObj);
+
+                        JSONObject info = responseObj.getJSONObject("info");
+
+                        System.out.println(info);
+
+                        topicEntity.setUid(info.getString("uid"));
+                        topicEntity.setTitle(info.getString("title"));
+                        topicEntity.setDescription(info.getString("desc"));
+                        topicEntity.setVideo_uid(info.getString("video_uid"));
+                        topicEntity.setLat(info.getString("lat"));
+                        topicEntity.setLon(info.getString("lon"));
+                        topicEntity.setLike(info.getInt("like"));
+                        String commentStr = info.getString("comment_list");
+                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                        topicEntity.setComments_list(commentList);
+
+                        topiList.add(topicEntity);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Headers responseHeaders = response.headers();
+                    for (int i = 0; i < responseHeaders.size(); i++) {
+                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    }
+                }
+            });
+        }
     }
 
     public JSONObject arrayListToGeoJson(ArrayList<TopicItems> arrayList) {
@@ -250,64 +344,47 @@ public class SearchTopicsFragment extends Fragment {
             case R.id.action_map:
                 // replace current fragment with map
 
-////              fake data
                 TopicItems topicItems = new TopicItems();
                 topicItems.setLatitude("40.776495");
                 topicItems.setLongitude("-73.972667");
                 topicResults.add(topicItems);
 
-
-//                Bundle args = new Bundle();
-//                args.putParcelableArrayList("123", topicResults);
-
-//                MapViewFragment mapViewFragment = new MapViewFragment();
-//                mapViewFragment.setArguments(args);
-
-//                FragmentManager fm = getActivity().getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fm.beginTransaction();
-
                 if (flag == 0) {
-//                    searchMap.setVisibility(View.VISIBLE);
-//                    searchResults.setVisibility(View.INVISIBLE);
+                    searchMap.setVisibility(View.VISIBLE);
+                    searchResults.setVisibility(View.INVISIBLE);
 
-//                    fragmentTransaction.replace(R.id.mapview, mapViewFragment);
-//                    fragmentTransaction.addToBackStack(null);
+                    if (searchMap == null)
+                        System.out.println("search map is already null");
+                    googleMap = searchMap.getMap();
 
-                    //Commit Transaction
-//                    fragmentTransaction.commit();
-
-//                    map = searchMap.getMap();
+                    if (googleMap == null)
+                        System.out.println("map is null");
 //                    Log.i("123", map.toString());
-//                    map.getUiSettings().setMyLocationButtonEnabled(true);
-//                    map.setMyLocationEnabled(true);
-//                    MapsInitializer.initialize(this.getActivity());
-//                    CameraUpdate cameraUpdate = CameraUpdateFactory
-//                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
-//                    map.animateCamera(cameraUpdate);
-////                    Bundle bundle = getArguments();
-////                    ArrayList<TopicItems> t = new ArrayList<>();
-////                    t = bundle.getParcelableArrayList("123");
-//
-//                    JSONObject json = arrayListToGeoJson(topicResults);
-//
-//                    GeoJsonLayer layer = null;
-//                    layer = new GeoJsonLayer(map, json);
-//
-//                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-//                    pointStyle.setTitle("Marker at Columbia University");
-//                    pointStyle.setIcon(BitmapDescriptorFactory
-//                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//                    pointStyle.setAnchor(0.1f, 0.1f);
-//
-//                    for (GeoJsonFeature feature : layer.getFeatures()) {
-//                        feature.setPointStyle(pointStyle);
-//                    }
-//                    layer.addLayerToMap();
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    googleMap.setMyLocationEnabled(true);
+                    MapsInitializer.initialize(this.getActivity());
+                    CameraUpdate cameraUpdate = CameraUpdateFactory
+                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
+                    googleMap.animateCamera(cameraUpdate);
+
+                    JSONObject json = arrayListToGeoJson(topicResults);
+
+                    GeoJsonLayer layer = null;
+                    layer = new GeoJsonLayer(googleMap, json);
+
+                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
+                    pointStyle.setTitle("Marker at Columbia University");
+                    pointStyle.setIcon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    pointStyle.setAnchor(0.1f, 0.1f);
+
+                    for (GeoJsonFeature feature : layer.getFeatures()) {
+                        feature.setPointStyle(pointStyle);
+                    }
+                    layer.addLayerToMap();
                 } else {
 
                 }
-
-
 
                 return true;
             default:
@@ -319,6 +396,7 @@ public class SearchTopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_searchtopics, container, false);
+//        searchMap.getMapAsync(this);
         return rootview;
     }
 

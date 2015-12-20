@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.kzhu9.fragments.sidebar.CreateTopicsFragment;
 import com.example.kzhu9.fragments.sidebar.MainFragment;
 import com.example.kzhu9.fragments.sidebar.NotificationFragment;
+import com.example.kzhu9.fragments.sidebar.RecommendationFragment;
 import com.example.kzhu9.fragments.sidebar.SearchTopicsFragment;
 import com.example.kzhu9.fragments.sidebar.SearchUsersFragment;
 
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity
             fm.beginTransaction().replace(R.id.content_frame, new CreateTopicsFragment()).commit();
         } else if (id == R.id.nav_notifications) {
             fm.beginTransaction().replace(R.id.content_frame, new NotificationFragment()).commit();
+        } else if (id == R.id.nav_recommendations) {
+            fm.beginTransaction().replace(R.id.content_frame, new RecommendationFragment()).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -48,8 +48,8 @@ public class TopicInfo extends AppCompatActivity {
 
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
 
-        double lat = Double.parseDouble(latitude);
-        double lon = Double.parseDouble(longitude);
+//        double lat = Double.parseDouble(latitude);
+//        double lon = Double.parseDouble(longitude);
 
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
 //
