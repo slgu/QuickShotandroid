@@ -177,6 +177,8 @@ public class SearchTopicsFragment extends Fragment {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             // topic/get
+
+
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
 
                                             intent.putExtra("UID", topicResults.get(position).getUid());
@@ -416,7 +418,7 @@ public class SearchTopicsFragment extends Fragment {
                             String resultStr = null;
                             switch (status) {
                                 case 0:
-                                    resultStr = "Successfully add " + tempTopic.getTitle().toString() + " as topic!";
+                                    resultStr = "Successfully like " + tempTopic.getTitle().toString();
                                     break;
                                 case 1:
                                     resultStr = "Server restarted! Need to login again!";

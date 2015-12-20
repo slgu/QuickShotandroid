@@ -13,12 +13,8 @@ import android.widget.VideoView;
 
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -50,7 +46,6 @@ public class TopicInfo extends AppCompatActivity {
         String latitude = getIntent().getExtras().getString("LAT");
         String longitude = getIntent().getExtras().getString("LON");
 
-//        String commentList = getIntent().getExtras().getString("COMMENTLIST");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
 
         double lat = Double.parseDouble(latitude);
@@ -66,18 +61,18 @@ public class TopicInfo extends AppCompatActivity {
         videoView.setMediaController(mediaController);
         videoView.start();
 
-        mapView = (MapView) findViewById(R.id.mapview_small);
-        mapView.onCreate(savedInstanceState);
-        map = mapView.getMap();
-        map.getUiSettings().setMyLocationButtonEnabled(true);
-        map.setMyLocationEnabled(true);
-        MapsInitializer.initialize(this);
-
-        System.out.println(latitude + " " + longitude);
-
-        CameraUpdate cameraUpdate = CameraUpdateFactory
-                .newLatLngZoom(new LatLng(lat, lon), 12);
-        map.animateCamera(cameraUpdate);
+//        mapView = (MapView) findViewById(R.id.mapview_small);
+//        mapView.onCreate(savedInstanceState);
+//        map = mapView.getMap();
+//        map.getUiSettings().setMyLocationButtonEnabled(true);
+//        map.setMyLocationEnabled(true);
+//        MapsInitializer.initialize(this);
+//
+//        System.out.println(latitude + " " + longitude);
+//
+//        CameraUpdate cameraUpdate = CameraUpdateFactory
+//                .newLatLngZoom(new LatLng(lat, lon), 12);
+//        map.animateCamera(cameraUpdate);
 
         btComment = (Button) findViewById(R.id.btComment);
         edComment = (EditText) findViewById(R.id.etComment);

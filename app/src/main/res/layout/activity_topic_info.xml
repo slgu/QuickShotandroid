@@ -13,68 +13,29 @@
         >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/topic"
-            android:layout_centerHorizontal="true"
-            android:textSize="24sp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"/>
-
-        <com.google.android.gms.maps.MapView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/mapview_small">
-
-        </com.google.android.gms.maps.MapView>
-
-        <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Some title"
+            android:text="This is a new Topic"
             android:typeface="serif"
             android:textSize="30dp"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@drawable/black"
             />
 
         <TextView
             android:id="@+id/describe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="free free pizza"
+            android:text="Here is some descriptions"
             android:layout_below="@id/title"
             android:textSize="18sp"
             android:typeface="sans"
             android:layout_gravity="center"
             />
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Like:"
-                android:id="@+id/tvLike"
-                android:textSize="18sp"
-                android:layout_marginRight="24dp"
-                android:layout_gravity="center"
-                />
 
-            <TextView
-                android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="999"
-                android:layout_toRightOf="@+id/tvLike"
-                android:textSize="18sp"
-                android:typeface="serif"
-                android:layout_gravity="center"
-                />
-
-        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -83,7 +44,7 @@
             android:id="@+id/tvVideo"
             android:textSize="18sp"
             android:layout_marginRight="24dp"
-            android:layout_below="@id/tvLike"
+            android:layout_below="@id/describe"
             />
 
         <TextView
@@ -91,29 +52,77 @@
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:text="VIDEO"
-            android:layout_below="@id/tvLike"
+            android:layout_below="@id/describe"
             android:layout_toRightOf="@+id/tvVideo"
             android:textSize="18sp"
             />
-
         <VideoView
-            android:layout_width="400dp"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:id="@+id/videoView"
-            android:layout_below="@id/video"
-            android:layout_marginTop="24dp" />
+            android:layout_below="@id/describe"
+            android:layout_marginTop="50dp" />
+
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/videoView"
+            android:gravity="left"
+            android:layout_marginTop="5dp"
+            android:id="@+id/likelayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Like:"
+                android:id="@+id/tvLike"
+                android:textSize="18sp"
+                android:layout_marginRight="0dp"
+                android:layout_gravity="left"
+                android:textColor="@drawable/black" />
+            <TextView
+                android:id="@+id/like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="999"
+                android:layout_toRightOf="@+id/tvLike"
+                android:layout_marginLeft="10dp"
+                android:textSize="18sp"
+                android:typeface="serif"
+                android:layout_gravity="left"
+                android:textColor="@drawable/black" />
+
+        </RelativeLayout>
+
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentTitle"
+            android:layout_below="@+id/video"
+            android:layout_marginTop="40dp"
+            android:text="Comments :"
+            android:textColor="@drawable/black"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/commentTitle"
             android:id="@+id/commentLayout"
-            android:layout_marginTop="20dp"
-            android:gravity="center">
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:background="@drawable/lightgray">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:id="@+id/commentSepaLine"
+                android:background="@drawable/black" />
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="20dp"
+                android:layout_below="@+id/commentSepaLine"
                 android:id="@+id/commentUserName"
+                android:textColor="@drawable/black"
                 android:text="Name"
                 />
             <TextView
@@ -123,6 +132,7 @@
                 android:layout_alignParentRight="true"
                 android:text="2015/12/17"
                 android:layout_marginRight="100dp"
+                android:textColor="@drawable/black"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -131,16 +141,23 @@
                 android:layout_below="@id/commentUserName"
                 android:text="This is an awesome video~"
                 android:typeface="monospace"
+                android:textColor="@drawable/black"
+                android:layout_marginBottom="3dp"
                 />
+
+
+
+
 
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_below="@id/commentLayout"
+            android:layout_marginTop="20dp"
             >
             <EditText
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:id="@+id/etComment"
