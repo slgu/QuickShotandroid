@@ -50,6 +50,9 @@ public class TopicInfo extends AppCompatActivity {
         String latitude = getIntent().getExtras().getString("LAT");
         String longitude = getIntent().getExtras().getString("LON");
 
+//        String commentList = getIntent().getExtras().getString("COMMENTLIST");
+        String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
+
         double lat = Double.parseDouble(latitude);
         double lon = Double.parseDouble(longitude);
 
@@ -83,6 +86,7 @@ public class TopicInfo extends AppCompatActivity {
         ((TextView) findViewById(R.id.describe)).setText(description);
         ((TextView) findViewById(R.id.like)).setText(String.valueOf(like));
         ((TextView) findViewById(R.id.video)).setText(video);
+        ((TextView) findViewById(R.id.commentContent)).setText(commentList);
 
         final String topicId = getIntent().getExtras().getString("UID");
         btComment.setOnClickListener(new View.OnClickListener() {

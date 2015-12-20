@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -32,6 +33,8 @@ import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -354,7 +357,7 @@ public class SearchTopicsFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
-            TopicItems tempTopic = topicDetails.get(position);
+            final TopicItems tempTopic = topicDetails.get(position);
 
             if (convertView == null) {
                 convertView = layoutInflater.inflate(R.layout.searchtopicresult, null);
@@ -371,6 +374,68 @@ public class SearchTopicsFragment extends Fragment {
 
             holder.topic_title.setText(tempTopic.getTitle());
             holder.topic_description.setText(tempTopic.getDescription());
+
+            holder.like_topic.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    String uid = tempTopic.getUid();
+
+                    String url = Config.REQUESTURL + "/user/addlike";
+
+                    RequestBody formBody = new FormEncodingBuilder()
+                            .add("tid", uid)
+                            .build();
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .post(formBody)
+                            .build();
+
+                    OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Request request, IOException throwable) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), "Unable to connect to server, please try later", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            throwable.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            if (!response.isSuccessful())
+                                throw new IOException("Unexpected code " + response);
+
+                            String responseStr = response.body().string();
+                            System.out.println(responseStr);
+
+                            Gson gson = new Gson();
+                            JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
+                            int status = Integer.parseInt(responseJsonObject.get("status").toString());
+                            String resultStr = null;
+                            switch (status) {
+                                case 0:
+                                    resultStr = "Successfully add " + tempTopic.getTitle().toString() + " as topic!";
+                                    break;
+                                case 1:
+                                    resultStr = "Server restarted! Need to login again!";
+                                    // terminate the app and relogin
+                                    break;
+                            }
+                            if (resultStr != null) {
+                                final String tmp = resultStr;
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), tmp, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
 
             return convertView;
         }

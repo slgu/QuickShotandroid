@@ -66,23 +66,11 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
         adapter.setOnItemClickListener(this);
         adapter.setOnItemLongClickListener(this);
 
-//
-//        recyclerView.addItemDecoration(
-//                new HorizontalDividerItemDecoration.Builder(getActivity())
-//                        .color(Color.RED)
-//                        .sizeResId(R.dimen.divider)
-//                        .marginResId(R.dimen.leftmargin, R.dimen.rightmargin)
-//                        .build());
-
         recyclerView.setAdapter(adapter);
 
-//        Log.i("CCcCCCCCCC", "cccc");
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
-
-        //
-
 
         String requestURL = Config.REQUESTURL + "/user/like";
 

@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -189,7 +190,10 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         topicEntity.setVideo_uid(info.getString("video_uid"));
                         topicEntity.setLat(info.getString("lat"));
                         topicEntity.setLon(info.getString("lon"));
-                        topicEntity.setLike(info.getInt("lon"));
+                        topicEntity.setLike(info.getInt("like"));
+                        String commentStr = info.getString("comment_list");
+                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                        topicEntity.setComments_list(commentList);
 
                         topiList.add(topicEntity);
 
@@ -228,6 +232,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
         intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
         intent.putExtra("LAT", topiList.get(position).getLat());
         intent.putExtra("LON", topiList.get(position).getLon());
+        intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
 
         startActivity(intent);
     }
