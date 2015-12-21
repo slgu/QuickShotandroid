@@ -1,98 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".FriendInfo">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/friend"
-        android:layout_centerHorizontal="true"
-        android:textSize="24sp"/>
+        android:theme="@style/AppTheme.AppBarOverlay"
+        >
 
-    <RelativeLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/infoContainer"
         android:layout_marginTop="32dp"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name:"
-            android:id="@+id/tvName"
-            android:textSize="18sp"
-            android:layout_marginRight="24dp"
-            />
+        android:gravity="center"
+        android:background="@drawable/lightgray">
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tvName"
-            android:text="Name Name"
-            android:textSize="18sp"
-            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/infoContainer"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:background="@drawable/pureWhite">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:id="@+id/tvName"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="20dp"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Age:"
-            android:id="@+id/tvAge"
-            android:textSize="18sp"
-            android:layout_marginRight="24dp"
-            android:layout_below="@id/tvName"
-            />
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvName"
+                android:text="Name Name"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
 
-        <TextView
-            android:id="@+id/age"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18 year-old"
-            android:layout_below="@id/tvName"
-            android:layout_toRightOf="@+id/tvAge"
-            android:textSize="18sp"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age:"
+                android:id="@+id/tvAge"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="48dp"
+                android:layout_below="@id/tvName"
+                android:layout_marginBottom="20dp"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email:"
-            android:id="@+id/tvEmail"
-            android:textSize="18sp"
-            android:layout_marginRight="24dp"
-            android:layout_below="@id/tvAge"
-            />
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18 year-old"
+                android:layout_below="@id/tvName"
+                android:layout_toRightOf="@+id/tvAge"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="whitehouse@gmail.com"
-            android:layout_below="@id/tvAge"
-            android:layout_toRightOf="@+id/tvEmail"
-            android:textSize="18sp"
-            />
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Address:"
-            android:id="@+id/tvAddress"
-            android:textSize="18sp"
-            android:layout_marginRight="24dp"
-            android:layout_below="@id/tvEmail"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email:"
+                android:id="@+id/tvEmail"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="29dp"
+                android:layout_below="@id/tvAge"
+                android:layout_marginBottom="20dp"
+                />
 
-        <TextView
-            android:id="@+id/address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Columbia Univ."
-            android:layout_below="@id/tvEmail"
-            android:layout_toRightOf="@+id/tvAddress"
-            android:textSize="18sp"
-            />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="whitehouse@gmail.com"
+                android:layout_below="@id/tvAge"
+                android:layout_toRightOf="@+id/tvEmail"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
 
-</RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address:"
+                android:id="@+id/tvAddress"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@id/tvEmail"
+                />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Columbia Univ."
+                android:layout_below="@id/tvEmail"
+                android:layout_toRightOf="@+id/tvAddress"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

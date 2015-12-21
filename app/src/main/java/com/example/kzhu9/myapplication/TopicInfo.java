@@ -13,8 +13,6 @@ import android.widget.VideoView;
 
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -30,8 +28,8 @@ public class TopicInfo extends AppCompatActivity {
     Button btComment;
     EditText edComment;
 
-    MapView mapView;
-    GoogleMap map;
+//    MapView mapView;
+//    GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,10 +1,15 @@
 package com.example.kzhu9.fragments.sidebar;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
@@ -30,18 +35,10 @@ import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.TopicList;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.maps.android.geojson.GeoJsonFeature;
-import com.google.maps.android.geojson.GeoJsonLayer;
-import com.google.maps.android.geojson.GeoJsonPointStyle;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -70,6 +67,11 @@ public class SearchTopicsFragment extends Fragment {
     GoogleMap googleMap;
     ArrayList<TopicItems> topicResults = new ArrayList<>();
     private int flag = 0;
+    private static final int REQUEST_EXTERNAL_LOCATION = 1;
+    private static String[] PERMISSIONS_LOCATION = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,6 +146,7 @@ public class SearchTopicsFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    pd.dismiss();
                                     Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -342,49 +345,191 @@ public class SearchTopicsFragment extends Fragment {
 
         switch(item.getItemId()){
             case R.id.action_map:
-                // replace current fragment with map
+                String requestURL;
+                final ProgressDialog pd;
 
-                TopicItems topicItems = new TopicItems();
-                topicItems.setLatitude("40.776495");
-                topicItems.setLongitude("-73.972667");
-                topicResults.add(topicItems);
+                searchMap.setVisibility(View.INVISIBLE);
+                searchResults.setVisibility(View.VISIBLE);
 
-                if (flag == 0) {
-                    searchMap.setVisibility(View.VISIBLE);
-                    searchResults.setVisibility(View.INVISIBLE);
+                // Step 1. pre execute show pd
+                pd = new ProgressDialog(getActivity());
+                pd.setCancelable(false);
+                pd.setMessage("Searching...");
+                pd.getWindow().setGravity(Gravity.CENTER);
+                pd.show();
 
-                    if (searchMap == null)
-                        System.out.println("search map is already null");
-                    googleMap = searchMap.getMap();
+                // Step 1.1 get Location information
 
-                    if (googleMap == null)
-                        System.out.println("map is null");
-//                    Log.i("123", map.toString());
-                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                    googleMap.setMyLocationEnabled(true);
-                    MapsInitializer.initialize(this.getActivity());
-                    CameraUpdate cameraUpdate = CameraUpdateFactory
-                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
-                    googleMap.animateCamera(cameraUpdate);
-
-                    JSONObject json = arrayListToGeoJson(topicResults);
-
-                    GeoJsonLayer layer = null;
-                    layer = new GeoJsonLayer(googleMap, json);
-
-                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-                    pointStyle.setTitle("Marker at Columbia University");
-                    pointStyle.setIcon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    pointStyle.setAnchor(0.1f, 0.1f);
-
-                    for (GeoJsonFeature feature : layer.getFeatures()) {
-                        feature.setPointStyle(pointStyle);
-                    }
-                    layer.addLayerToMap();
-                } else {
-
+                LocationManager lm = (LocationManager) getActivity().getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(
+                            this.getActivity(),
+                            PERMISSIONS_LOCATION,
+                            REQUEST_EXTERNAL_LOCATION
+                    );
+//                    return true;
                 }
+                Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                System.out.println("now printing latitude and longitude");
+                System.out.println(latitude+" + "+longitude);
+
+                // Step 2. Get data
+                requestURL = Config.REQUESTURL + "/topic/find";
+                RequestBody formBody = new FormEncodingBuilder()
+                        .add("lat", String.valueOf(latitude))
+                        .add("lon", String.valueOf(longitude))
+                        .build();
+                Request request = new Request.Builder()
+                        .url(requestURL)
+                        .post(formBody)
+                        .build();
+
+                OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException throwable) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pd.dismiss();
+                                Toast.makeText(getActivity(), "Unable to connect to server, please try later", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (!response.isSuccessful()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pd.dismiss();
+                                    Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                            // need to re-login
+                            throw new IOException("Unexpected code " + response);
+                        }
+
+                        String responseStr = response.body().string();
+                        System.out.println("topic find reponse format");
+                        System.out.println(responseStr);
+                        try {
+                            JSONArray topicList;
+                            JSONObject responseObj = new JSONObject(responseStr);
+                            System.out.println("Topic Search List Fragment Get Data");
+                            System.out.println(responseObj);
+                            topicList = responseObj.getJSONArray("info");
+
+                            TopicItems tempTopic;
+
+                            ArrayList<String> uidList = new ArrayList<>();
+
+                            if (!topicResults.isEmpty())
+                                topicResults.clear();
+                            for (int i = 0; i < topicList.length(); i++) {
+                                tempTopic = new TopicItems();
+
+                                JSONObject obj = topicList.getJSONObject(i);
+
+                                tempTopic.setUid(obj.getString("uid"));
+                                tempTopic.setTitle(obj.getString("title"));
+                                tempTopic.setDescription(obj.getString("desc"));
+
+                                uidList.add(obj.getString("uid"));
+
+                                topicResults.add(tempTopic);
+                            }
+
+                            getTopicList(uidList);
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pd.dismiss();
+                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    search.clearFocus();
+
+                                    searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            Intent intent = new Intent(getActivity(), TopicInfo.class);
+
+                                            intent.putExtra("UID", topiList.get(position).getUid());
+                                            intent.putExtra("TITLE", topiList.get(position).getTitle());
+                                            intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
+                                            intent.putExtra("LIKE", topiList.get(position).getLike());
+                                            intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
+                                            intent.putExtra("LAT", topiList.get(position).getLat());
+                                            intent.putExtra("LON", topiList.get(position).getLon());
+                                            intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
+
+                                            startActivity(intent);
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (JSONException e) {
+                            pd.dismiss();
+                            e.printStackTrace();
+                        }
+
+                        pd.dismiss();
+                        Headers responseHeaders = response.headers();
+                        for (int i = 0; i < responseHeaders.size(); i++) {
+                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                        }
+                    }
+                });
+
+
+            // replace current fragment with map
+
+//                TopicItems topicItems = new TopicItems();
+//                topicItems.setLatitude("40.776495");
+//                topicItems.setLongitude("-73.972667");
+//                topicResults.add(topicItems);
+//
+//                if (flag == 0) {
+//                    searchMap.setVisibility(View.VISIBLE);
+//                    searchResults.setVisibility(View.INVISIBLE);
+//
+//                    if (searchMap == null)
+//                        System.out.println("search map is already null");
+//                    googleMap = searchMap.getMap();
+//
+//                    if (googleMap == null)
+//                        System.out.println("map is null");
+////                    Log.i("123", map.toString());
+//                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+//                    googleMap.setMyLocationEnabled(true);
+//                    MapsInitializer.initialize(this.getActivity());
+//                    CameraUpdate cameraUpdate = CameraUpdateFactory
+//                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
+//                    googleMap.animateCamera(cameraUpdate);
+//
+//                    JSONObject json = arrayListToGeoJson(topicResults);
+//
+//                    GeoJsonLayer layer = null;
+//                    layer = new GeoJsonLayer(googleMap, json);
+//
+//                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
+//                    pointStyle.setTitle("Marker at Columbia University");
+//                    pointStyle.setIcon(BitmapDescriptorFactory
+//                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//                    pointStyle.setAnchor(0.1f, 0.1f);
+//
+//                    for (GeoJsonFeature feature : layer.getFeatures()) {
+//                        feature.setPointStyle(pointStyle);
+//                    }
+//                    layer.addLayerToMap();
+//                } else {
+//
+//                }
+
 
                 return true;
             default:
