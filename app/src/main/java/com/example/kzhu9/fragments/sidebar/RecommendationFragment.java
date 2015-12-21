@@ -225,7 +225,7 @@ public class RecommendationFragment extends Fragment {
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
                         JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("Topic List Fragment Render Data");
+                        System.out.println("Recommendation Fragment Fragment Render Data");
                         System.out.println(responseObj);
 
                         JSONObject info = responseObj.getJSONObject("info");

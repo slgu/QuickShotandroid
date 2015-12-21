@@ -5,6 +5,6 @@ package com.example.kzhu9.config;
  */
 public class Config {
 //    final public static String REQUESTURL = "http://45.79.147.213:8080";
-    final public static String REQUESTURL = "http://05b0b4a0.ngrok.io";
+    final public static String REQUESTURL = "http://4a707c22.ngrok.io";
     public static String user_id = null;
 }

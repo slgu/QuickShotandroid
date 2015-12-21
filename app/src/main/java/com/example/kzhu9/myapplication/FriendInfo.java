@@ -20,12 +20,12 @@ public class FriendInfo extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String name = getIntent().getExtras().getString("NAME");
-        String age = getIntent().getExtras().getString("AGE");
+        int age = getIntent().getExtras().getInt("AGE");
         String email = getIntent().getExtras().getString("EMAIL");
         String address = getIntent().getExtras().getString("ADDRESS");
 
         ((TextView) findViewById(R.id.name)).setText(name);
-        ((TextView) findViewById(R.id.age)).setText(age);
+        ((TextView) findViewById(R.id.age)).setText(String.valueOf(age));
         ((TextView) findViewById(R.id.email)).setText(email);
         ((TextView) findViewById(R.id.address)).setText(address);
     }

@@ -144,7 +144,6 @@ public class SearchUsersFragment extends Fragment {
                                 tempFriend.setEmail(obj.getString("email"));
                                 tempFriend.setSex(obj.getInt("sex"));
                                 tempFriend.setTopicList(obj.getString("topics_list"));
-                                tempFriend.setFriendList(obj.getString("friends_list"));
 
                                 // if the user is not friend yet
                                 if (obj.getString("friendTag").equals("0"))

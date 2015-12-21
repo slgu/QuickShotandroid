@@ -9,16 +9,14 @@ import android.widget.TextView;
  */
 class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     TextView nameText;
-    TextView latText;
-    TextView lonText;
+    TextView sexView;
     private FriendItemClickListener mListener;
     private FriendItemLongClickListener mLongClickListener;
 
     public FriendListViewHolder(View itemView, FriendItemClickListener listener, FriendItemLongClickListener longClickListener) {
         super(itemView);
         nameText = (TextView) itemView.findViewById(R.id.listText);
-        latText = (TextView) itemView.findViewById(R.id.itemLat);
-        lonText = (TextView) itemView.findViewById(R.id.itemLon);
+        sexView = (TextView) itemView.findViewById(R.id.item_sex);
 
         this.mListener = listener;
         this.mLongClickListener = longClickListener;

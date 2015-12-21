@@ -165,13 +165,14 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         FriendList.FriendEntity friendEntity = new FriendList.FriendEntity();
 
                         friendList = new JSONObject(responseStr);
-                        System.out.print(friendList);
                         info = friendList.getJSONObject("info");
 
-                        friendEntity.setName(info.getString("name"));
-                        friendEntity.setAge(info.getString("age"));
-                        friendEntity.setAddress(info.getString("address"));
                         friendEntity.setEmail(info.getString("email"));
+                        friendEntity.setName(info.getString("name"));
+                        friendEntity.setTopics_list(info.getString("topics_list"));
+                        friendEntity.setSex(info.getInt("sex"));
+                        friendEntity.setAge(info.getInt("age"));
+                        friendEntity.setAddress(info.getString("address"));
 
                         friList.add(friendEntity);
 
@@ -207,6 +208,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         intent.putExtra("AGE", friList.get(position).getAge());
         intent.putExtra("EMAIL", friList.get(position).getEmail());
         intent.putExtra("ADDRESS", friList.get(position).getAddress());
+        intent.putExtra("TOPIC_LISTS", friList.get(position).getTopics_list());
 
         startActivity(intent);
     }

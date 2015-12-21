@@ -106,52 +106,26 @@
             android:text="Comments :"
             android:textColor="@drawable/black"
             />
+
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_below="@id/commentTitle"
             android:id="@+id/commentLayout"
             android:layout_marginTop="0dp"
             android:gravity="center"
             android:background="@drawable/lightgray">
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:id="@+id/commentSepaLine"
-                android:background="@drawable/black" />
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="20dp"
-                android:layout_below="@+id/commentSepaLine"
-                android:id="@+id/commentUserName"
-                android:textColor="@drawable/black"
-                android:text="Name"
-                />
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="20dp"
-                android:id="@+id/commentTime"
-                android:layout_alignParentRight="true"
-                android:text="2015/12/17"
-                android:layout_marginRight="100dp"
-                android:textColor="@drawable/black"
-                />
-            <TextView
+
+
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/commentContent"
-                android:layout_below="@id/commentUserName"
-                android:text="This is an awesome video~"
-                android:typeface="monospace"
-                android:textColor="@drawable/black"
-                android:layout_marginBottom="3dp"
-                />
-
-
-
-
+                android:layout_height="match_parent"
+                android:id="@+id/comment_list_view"/>
 
         </RelativeLayout>
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"

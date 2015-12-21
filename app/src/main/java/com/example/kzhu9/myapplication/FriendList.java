@@ -1,7 +1,5 @@
 package com.example.kzhu9.myapplication;
 
-import java.util.ArrayList;
-
 /**
  * Created by jinliang on 11/15/15.
  */
@@ -50,10 +48,10 @@ public class FriendList {
         private String name;
         private String passwd;
         private int sex;
-        private String age;
+        private int age;
         private String address;
-        private ArrayList<String> friends_list;
-        private ArrayList<String> topics_list;
+        private String friends_list;
+        private String topics_list;
 
         public void setUid(String uid) {
             this.uid = uid;
@@ -75,7 +73,7 @@ public class FriendList {
             this.sex = sex;
         }
 
-        public void setAge(String age) {
+        public void setAge(int age) {
             this.age = age;
         }
 
@@ -83,11 +81,11 @@ public class FriendList {
             this.address = address;
         }
 
-        public void setFriends_list(ArrayList<String> friends_list) {
+        public void setFriends_list(String friends_list) {
             this.friends_list = friends_list;
         }
 
-        public void setTopics_list(ArrayList<String> topics_list) {
+        public void setTopics_list(String topics_list) {
             this.topics_list = topics_list;
         }
 
@@ -111,7 +109,7 @@ public class FriendList {
             return sex;
         }
 
-        public String getAge() {
+        public int getAge() {
             return age;
         }
 
@@ -119,11 +117,11 @@ public class FriendList {
             return address;
         }
 
-        public ArrayList<String> getFriends_list() {
+        public String getFriends_list() {
             return friends_list;
         }
 
-        public ArrayList<String> getTopics_list() {
+        public String getTopics_list() {
             return topics_list;
         }
     }

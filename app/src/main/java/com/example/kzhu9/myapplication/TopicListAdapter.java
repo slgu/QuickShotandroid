@@ -27,12 +27,9 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListViewHolder> 
         list = new ArrayList<>();
     }
 
-    //
     public void setList(ArrayList<TopicList.TopicEntity> data) {
-//        list = data;
         list.clear();
         list.addAll(data);
-//        notifyItemChanged(0, list.size());
         notifyDataSetChanged();
     }
 
@@ -50,9 +47,7 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListViewHolder> 
 
         holder.tvTitle.setText(topic.getTitle());
         holder.tvDescribe.setText(topic.getDescription());
-
-//        holder.imageView.setImageUrl(friend.getPic(),imageLoader);
-
+        holder.tvLike.setText(String.valueOf(topic.getLike()));
     }
 
     @Override

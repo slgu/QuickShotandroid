@@ -3,6 +3,8 @@ package com.example.kzhu9.myapplication;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,11 +24,19 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class TopicInfo extends AppCompatActivity {
     Button btComment;
     EditText edComment;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private CommentListAdapter mAdapter;
 
 //    MapView mapView;
 //    GoogleMap map;
@@ -44,7 +54,37 @@ public class TopicInfo extends AppCompatActivity {
         String latitude = getIntent().getExtras().getString("LAT");
         String longitude = getIntent().getExtras().getString("LON");
 
+//        ArrayList<String> com = getIntent().getExtras().getParcelableArrayList("COMMENTLIST");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
+        String comments = commentList.substring(1, commentList.length() - 1);
+
+        JSONArray temp = new JSONArray();
+
+        ArrayList<CommentItem> commentsData = new ArrayList<>();
+
+        try {
+            temp = new JSONArray(comments);
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject com = temp.getJSONObject(i);
+                CommentItem comItem = new CommentItem();
+                comItem.setName(com.getString("name"));
+                comItem.setText(com.getString("text"));
+                comItem.setTime(com.getString("time"));
+                commentsData.add(comItem);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.comment_list_view);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new CommentListAdapter(commentsData);
+        mRecyclerView.setAdapter(mAdapter);
+
 
 //        double lat = Double.parseDouble(latitude);
 //        double lon = Double.parseDouble(longitude);
@@ -79,7 +119,7 @@ public class TopicInfo extends AppCompatActivity {
         ((TextView) findViewById(R.id.describe)).setText(description);
         ((TextView) findViewById(R.id.like)).setText(String.valueOf(like));
         ((TextView) findViewById(R.id.video)).setText(video);
-        ((TextView) findViewById(R.id.commentContent)).setText(commentList);
+//        ((TextView) findViewById(R.id.commentContent)).setText(comments);
 
         final String topicId = getIntent().getExtras().getString("UID");
         btComment.setOnClickListener(new View.OnClickListener() {
@@ -159,3 +199,4 @@ public class TopicInfo extends AppCompatActivity {
         });
     }
 }
+

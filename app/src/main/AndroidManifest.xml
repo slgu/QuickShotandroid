@@ -66,7 +66,7 @@
             android:name=".RegisterActivity"
             android:label="RegisterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".TopicInfo"
             android:label="TopicInfo"
@@ -81,7 +81,7 @@
             android:name=".MapActivity"
             android:label="MapActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
