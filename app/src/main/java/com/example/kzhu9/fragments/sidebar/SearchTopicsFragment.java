@@ -8,9 +8,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Gravity;
@@ -30,13 +33,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.MapActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.TopicList;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -58,15 +64,15 @@ import java.util.Arrays;
  * Created by kzhu9 on 11/7/15.
  */
 
-public class SearchTopicsFragment extends Fragment {
+public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback {
     final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
     SearchView search;
+    MenuItem locationItem, searchItem;
     ListView searchResults;
-    MapView searchMap;
+    FloatingActionButton fab;
     View rootview;
-    GoogleMap googleMap;
     ArrayList<TopicItems> topicResults = new ArrayList<>();
-    private int flag = 0;
+
     private static final int REQUEST_EXTERNAL_LOCATION = 1;
     private static String[] PERMISSIONS_LOCATION = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -77,28 +83,63 @@ public class SearchTopicsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_search, menu);
-        inflater.inflate(R.menu.main_map, menu);
-//        if (flag == 0) {
-//            inflater.inflate(R.menu.main_map, menu);
-//        } else {
-//            inflater.inflate(R.menu.main_topic_list, menu);
-//        }
+        inflater.inflate(R.menu.main_location, menu);
 
-        search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchItem = menu.findItem(R.id.action_search);
+        search = (SearchView) searchItem.getActionView();
+        locationItem = menu.findItem(R.id.action_location);
         search.setSubmitButtonEnabled(true);
 
         search.setQueryHint("Search Topics...");
 //        search.setIconifiedByDefault(false);
 
-        searchMap = (MapView) rootview.findViewById(R.id.mapview_searchmap);
-
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchtopics);
+        fab = (FloatingActionButton) rootview.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (topicResults != null) {
+//                    TopicItems topicItems = new TopicItems();
+//                    topicItems.setLatitude("40.776495");
+//                    topicItems.setLongitude("-73.972667");
+//                    topicResults.add(topicItems);
+
+                    Intent intent = new Intent(getActivity(), MapActivity.class);
+
+
+                    intent.putParcelableArrayListExtra("123", (ArrayList<? extends Parcelable>) topicResults);
+
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), "Nothing to show", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        MenuItemCompat.setOnActionExpandListener(searchItem,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        System.out.println("search item is closed");
+                        setItemsVisibility(menu, searchItem, true);
+                        return true;  // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        System.out.println("search item is clicked");
+                        setItemsVisibility(menu, searchItem, false);
+                        return true;  // Return true to expand action view
+                    }
+                }
+        );
+
         search.setOnQueryTextListener(new OnQueryTextListener() {
             JSONArray topicList;
             String requestURL;
@@ -106,7 +147,7 @@ public class SearchTopicsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String newText) {
-                searchMap.setVisibility(View.INVISIBLE);
+//                searchMap.setVisibility(View.INVISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
 
                 // Step 1. pre execute show pd
@@ -238,6 +279,18 @@ public class SearchTopicsFragment extends Fragment {
         });
     }
 
+    private void setItemsVisibility(Menu menu, MenuItem exception, boolean visible) {
+        for (int i=0; i<menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception) item.setVisible(visible);
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+    }
+
     public void getTopicList(ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
         System.out.println("this is topicUidList size.");
@@ -312,43 +365,13 @@ public class SearchTopicsFragment extends Fragment {
         }
     }
 
-    public JSONObject arrayListToGeoJson(ArrayList<TopicItems> arrayList) {
-        JSONObject featureCollection = new JSONObject();
-        try {
-            featureCollection.put("type", "FeatureCollection");
-            JSONArray featureList = new JSONArray();
-            // iterate through your list
-            for (TopicItems obj : arrayList) {
-                JSONObject point = new JSONObject();
-                point.put("type", "Point");
-                // construct a JSONArray from a string; can also use an array or list
-                JSONArray coord = new JSONArray("[" + obj.getLongitude() + "," + obj.getLatitude() + "]");
-                point.put("coordinates", coord);
-                JSONObject feature = new JSONObject();
-                feature.put("geometry", point);
-                feature.put("type", "Feature");
-
-                featureList.put(feature);
-                featureCollection.put("features", featureList);
-
-            }
-        } catch (JSONException e) {
-            //Log.i("can't save json object: "+e.toString());
-        }
-        // output the result
-        System.out.println("featureCollection=" + featureCollection.toString());
-        return featureCollection;
-    }
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-
-        switch(item.getItemId()){
-            case R.id.action_map:
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_location:
                 String requestURL;
                 final ProgressDialog pd;
 
-                searchMap.setVisibility(View.INVISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
 
                 // Step 1. pre execute show pd
@@ -373,7 +396,7 @@ public class SearchTopicsFragment extends Fragment {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 System.out.println("now printing latitude and longitude");
-                System.out.println(latitude+" + "+longitude);
+                System.out.println(latitude + " + " + longitude);
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL + "/topic/find";
@@ -486,50 +509,6 @@ public class SearchTopicsFragment extends Fragment {
                 });
 
 
-            // replace current fragment with map
-
-//                TopicItems topicItems = new TopicItems();
-//                topicItems.setLatitude("40.776495");
-//                topicItems.setLongitude("-73.972667");
-//                topicResults.add(topicItems);
-//
-//                if (flag == 0) {
-//                    searchMap.setVisibility(View.VISIBLE);
-//                    searchResults.setVisibility(View.INVISIBLE);
-//
-//                    if (searchMap == null)
-//                        System.out.println("search map is already null");
-//                    googleMap = searchMap.getMap();
-//
-//                    if (googleMap == null)
-//                        System.out.println("map is null");
-////                    Log.i("123", map.toString());
-//                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-//                    googleMap.setMyLocationEnabled(true);
-//                    MapsInitializer.initialize(this.getActivity());
-//                    CameraUpdate cameraUpdate = CameraUpdateFactory
-//                            .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
-//                    googleMap.animateCamera(cameraUpdate);
-//
-//                    JSONObject json = arrayListToGeoJson(topicResults);
-//
-//                    GeoJsonLayer layer = null;
-//                    layer = new GeoJsonLayer(googleMap, json);
-//
-//                    GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-//                    pointStyle.setTitle("Marker at Columbia University");
-//                    pointStyle.setIcon(BitmapDescriptorFactory
-//                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//                    pointStyle.setAnchor(0.1f, 0.1f);
-//
-//                    for (GeoJsonFeature feature : layer.getFeatures()) {
-//                        feature.setPointStyle(pointStyle);
-//                    }
-//                    layer.addLayerToMap();
-//                } else {
-//
-//                }
-
 
                 return true;
             default:
@@ -541,7 +520,6 @@ public class SearchTopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_searchtopics, container, false);
-//        searchMap.getMapAsync(this);
         return rootview;
     }
 

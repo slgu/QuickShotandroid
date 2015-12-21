@@ -79,9 +79,11 @@
         </activity>
         <activity
             android:name=".MapActivity"
-            android:label="MapActivity"
+            android:label="Search Result"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            </activity>
     </application>
 
 </manifest>

@@ -44,17 +44,25 @@ public class MapViewFragment extends Fragment {
         map.setMyLocationEnabled(true);
         MapsInitializer.initialize(this.getActivity());
         CameraUpdate cameraUpdate = CameraUpdateFactory
-                .newLatLngZoom(new LatLng(40.808226, -73.961845), 12);
+                .newLatLngZoom(new LatLng(40.808226, -73.961845), 13);
         map.animateCamera(cameraUpdate);
+
         Bundle args = getArguments();
-        ArrayList<TopicItems> t = new ArrayList<>();
-        t = args.getParcelableArrayList("123");
+        ArrayList<TopicItems> t = args.getParcelableArrayList("123");
 
         JSONObject json = arrayListToGeoJson(t);
 
 
-        GeoJsonLayer layer = null;
-        layer = new GeoJsonLayer(map, json);
+        GeoJsonLayer layer = new GeoJsonLayer(map, json);
+//        GeoJsonLayer layer = null;
+//        try {
+//            layer =
+//                    new GeoJsonLayer(map, R.raw.geojson, getActivity());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
         GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
         pointStyle.setTitle("Marker at Columbia University");

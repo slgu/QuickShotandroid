@@ -27,6 +27,11 @@
             android:id="@+id/nav_recommendations"
             android:icon="@android:drawable/ic_dialog_dialer"
             android:title="@string/recommendations" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@android:drawable/ic_media_ff"
+            android:title="@string/logout" />
     </group>
 
 </menu>

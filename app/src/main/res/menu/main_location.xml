@@ -5,8 +5,8 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/action_map"
-        android:icon="@android:drawable/ic_menu_mapmode"
-        android:title="@string/action_show_map"
+        android:id="@+id/action_location"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:title="@string/action_location"
         app:showAsAction="always" />
 </menu>

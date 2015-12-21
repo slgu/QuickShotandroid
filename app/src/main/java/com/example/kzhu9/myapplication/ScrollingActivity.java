@@ -26,4 +26,8 @@ public class ScrollingActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+
+
+
 }

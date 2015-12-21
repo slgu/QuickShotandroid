@@ -41,6 +41,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -50,6 +51,7 @@ import java.io.IOException;
 public class CreateTopicsFragment extends Fragment {
     private static final int RESULT_LOAD_VIDEO = 1;
     private static final MediaType MEDIA_TYPE_MP4 = MediaType.parse("video/mp4");
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static final int REQUEST_EXTERNAL_LOCATION = 1;
@@ -64,6 +66,7 @@ public class CreateTopicsFragment extends Fragment {
     View rootview;
     Button bSubmit, bUploadVideo;
     EditText topicName, topicDiscription;
+    Bitmap bmThumbnail;
     ImageView videoThumbnail;
     String path;
     double longitude, latitude;
@@ -114,7 +117,7 @@ public class CreateTopicsFragment extends Fragment {
             path = getRealPathFromURI(getContext(), selectedVideo);
             video = new File(path);
 
-            Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.MINI_KIND);
+            bmThumbnail = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.MINI_KIND);
             videoThumbnail.setImageBitmap(bmThumbnail);
         }
     }
@@ -138,11 +141,6 @@ public class CreateTopicsFragment extends Fragment {
             return;
         }
         Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//        if (location!=null){
-//            longitude = location.getLongitude();
-//            latitude = location.getLatitude();
-//            //String locLat = String.valueOf(latitude)+","+String.valueOf(longitude);
-//        }
 
         longitude = location.getLongitude();
         latitude = location.getLatitude();
@@ -164,6 +162,9 @@ public class CreateTopicsFragment extends Fragment {
             public void onClick(View v) {
                 title = topicName.getText().toString();
                 description = topicDiscription.getText().toString();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 30, stream);
+                byte[] byteArray = stream.toByteArray();
 
                 // Step 1. pre execute show pd
                 pd = new ProgressDialog(getActivity());
@@ -184,6 +185,9 @@ public class CreateTopicsFragment extends Fragment {
                         .addPart(
                                 Headers.of("Content-Disposition", "form-data; name=\"file\""),
                                 RequestBody.create(MEDIA_TYPE_MP4, new File(path)))
+                        .addPart(
+                                Headers.of("Content-Disposition", "form-data; name=\"image\""),
+                                RequestBody.create(MEDIA_TYPE_PNG, byteArray))
                         .build();
 
                 Request request = new Request.Builder()

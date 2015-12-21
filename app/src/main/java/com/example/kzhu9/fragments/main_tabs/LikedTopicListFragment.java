@@ -152,6 +152,9 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                     .post(formBody)
                     .build();
 
+            if (getActivity() == null)
+                return;
+
             OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
 
                 @Override
@@ -198,6 +201,9 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         topicEntity.setComments_list(commentList);
 
                         topiList.add(topicEntity);
+
+                        if(getActivity() == null)
+                            return;
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

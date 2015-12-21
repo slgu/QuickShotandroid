@@ -3,13 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview_searchmap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </com.google.android.gms.maps.MapView>
-
     <ListView
         android:id="@+id/listview_searchtopics"
         android:layout_width="match_parent"
@@ -18,4 +11,11 @@
         android:divider="#E6E6E6"
         android:dividerHeight="5dp"
         />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_dialog_map" />
 </FrameLayout>

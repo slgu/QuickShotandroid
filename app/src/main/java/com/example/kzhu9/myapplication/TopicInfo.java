@@ -166,6 +166,7 @@ public class TopicInfo extends AppCompatActivity {
                                 switch (status) {
                                     case 0:
                                         resultStr = "Done adding comment!";
+                                        // update comment list
                                         break;
                                     case 1:
                                         // go back to login activity ???????????????

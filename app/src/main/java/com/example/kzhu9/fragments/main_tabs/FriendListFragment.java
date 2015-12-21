@@ -138,6 +138,8 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     .url(requestURL)
                     .post(formBody)
                     .build();
+            if (getActivity() == null)
+                return;
 
             OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
                 @Override
@@ -175,6 +177,9 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         friendEntity.setAddress(info.getString("address"));
 
                         friList.add(friendEntity);
+
+                        if(getActivity() == null)
+                            return;
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

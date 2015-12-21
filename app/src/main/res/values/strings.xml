@@ -4,7 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_search">Search For Friends</string>
+    <string name="action_search">Search By Description</string>
+    <string name="action_location">Search By Location</string>
 
     <string name="action_settings">Settings</string>
 
@@ -14,6 +15,7 @@
     <string name="create_topics">Create Topics</string>
     <string name="notifications">Notifications</string>
     <string name="recommendations">Recommendations</string>
+    <string name="logout">Logout</string>
     <string name="topic_title">topic title</string>
     <string name="topic_description">topic description</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

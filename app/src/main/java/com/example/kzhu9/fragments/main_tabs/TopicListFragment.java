@@ -80,7 +80,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
 
     private void getTopicUidList() {
-        String requestURL =  Config.REQUESTURL+"/user/get";
+        String requestURL = Config.REQUESTURL + "/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
                 .add("uid", Config.user_id)
@@ -151,6 +151,9 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     .post(formBody)
                     .build();
 
+            if (getActivity() == null)
+                return;
+
             OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
 
                 @Override
@@ -197,16 +200,17 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
                         topiList.add(topicEntity);
 
+                        if (getActivity() == null)
+                            return;
+
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 if (topiList.size() == size) {
                                     adapter.setList(topiList);
                                 }
                             }
                         });
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -238,5 +242,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     }
 
     @Override
-    public void onItemLongClick(View view, int position) {}
+    public void onItemLongClick(View view, int position) {
+    }
 }

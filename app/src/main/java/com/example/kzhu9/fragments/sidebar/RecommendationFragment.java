@@ -105,6 +105,7 @@ public class RecommendationFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            pd.dismiss();
                             Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
                         }
                     });
