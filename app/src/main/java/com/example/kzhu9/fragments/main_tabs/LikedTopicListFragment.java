@@ -23,7 +23,6 @@ import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -108,7 +107,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 try {
                     JSONArray responseArr = new JSONArray(responseStr);
                     System.out.println("Liked Topic List Fragment Get And Render Data");
-                    System.out.println(responseArr);
 
                     ArrayList<String> uidList = new ArrayList<>();
 
@@ -121,8 +119,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
                         uidList.add(obj.getString("uid"));
                     }
-                    System.out.println("print uidList");
-                    System.out.println(uidList.toString());
 
                     getTopicList(uidList);
 
@@ -130,16 +126,17 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                     e.printStackTrace();
                 }
 
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                }
+//                Headers responseHeaders = response.headers();
+//                for (int i = 0; i < responseHeaders.size(); i++) {
+//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                }
             }
         });
     }
 
     public void getTopicList(ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
+        System.out.println("/topic/get  Topic List Fragment Render Data");
 
         for (String uid : topicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
@@ -181,12 +178,7 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
                         JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("/topic/get  Topic List Fragment Render Data");
-                        System.out.println(responseObj);
-
                         JSONObject info = responseObj.getJSONObject("info");
-
-                        System.out.println(info);
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -220,10 +212,10 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         e.printStackTrace();
                     }
 
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0; i < responseHeaders.size(); i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
+//                    Headers responseHeaders = response.headers();
+//                    for (int i = 0; i < responseHeaders.size(); i++) {
+//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                    }
                 }
             });
         }

@@ -50,6 +50,12 @@ public class MapViewFragment extends Fragment {
         Bundle args = getArguments();
         ArrayList<TopicItems> t = args.getParcelableArrayList("123");
 
+        System.out.println("in mapview fragment print "+t.size());
+        for (TopicItems topicItems: t) {
+            System.out.println("||||||||||||||||||");
+            System.out.println(topicItems.getLatitude());
+            System.out.println(topicItems.getLongitude());
+        }
         JSONObject json = arrayListToGeoJson(t);
 
 

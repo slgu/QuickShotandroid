@@ -26,7 +26,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListViewHold
    //
    public void setList(ArrayList<CommentItem> data) {
 //        list = data;
-       list.clear();
+//       list.clear();
        list.addAll(data);
 //        notifyItemChanged(0, list.size());
        notifyDataSetChanged();

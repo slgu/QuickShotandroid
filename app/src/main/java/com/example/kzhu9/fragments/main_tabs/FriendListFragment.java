@@ -21,7 +21,6 @@ import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -101,8 +100,10 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                 String responseStr = response.body().string();
 
+
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
+                    System.out.println("Friend List Fragment Get Data");
                     JSONObject info = responseObj.getJSONObject("info");
                     JSONArray friendsListObj = info.getJSONArray("friends_list");
 
@@ -117,10 +118,10 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     e.printStackTrace();
                 }
 
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                }
+//                Headers responseHeaders = response.headers();
+//                for (int i = 0; i < responseHeaders.size(); i++) {
+//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                }
             }
         });
     }
@@ -128,6 +129,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     public void getFriendList(ArrayList<String> friendUidList) {
         final int size = friendUidList.size();
 
+        System.out.println("Friend List Fragment Render Data");
         for (String uid : friendUidList) {
             String requestURL = Config.REQUESTURL + "/user/get";
 
@@ -160,6 +162,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+
                     JSONObject friendList;
                     JSONObject info;
 
@@ -196,10 +199,10 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     }
 
 
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0; i < responseHeaders.size(); i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
+//                    Headers responseHeaders = response.headers();
+//                    for (int i = 0; i < responseHeaders.size(); i++) {
+//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                    }
                 }
             });
         }

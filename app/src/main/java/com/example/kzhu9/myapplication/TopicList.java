@@ -5,26 +5,8 @@ import java.util.ArrayList;
 /**
  * Created by jinliang on 11/15/15.
  */
-public class TopicList {
-
-
-    /**
-     * status : 0
-     * info : {"uid":"86893e12-a4aa-4415-a5c3-cbafb1da2e87","email":"song98@gmail.com","name":"songgao","passwd":"","friends_list":["101","102","103","104","105"],"topics_list":["topic_201","topic_202","topic_203","topic_204","topic_205"],"sex":0,"age":22,"address":"columbia university"}
-     */
-
+public class TopicList{
     private int status;
-    /**
-     * uid : 86893e12-a4aa-4415-a5c3-cbafb1da2e87
-     * email : song98@gmail.com
-     * name : songgao
-     * passwd :
-     * friends_list : ["101","102","103","104","105"]
-     * topics_list : ["topic_201","topic_202","topic_203","topic_204","topic_205"]
-     * sex : 0
-     * age : 22
-     * address : columbia university
-     */
 
     private TopicEntity info;
 
@@ -44,7 +26,7 @@ public class TopicList {
         return info;
     }
 
-    public static class TopicEntity {
+    public static class TopicEntity implements Comparable<TopicEntity> {
         private String uid;
         private String title;
         private String description;
@@ -53,6 +35,12 @@ public class TopicList {
         private int like;
         private String video_uid;
         private ArrayList<String> comments_list;
+
+        @Override
+        public int compareTo(TopicEntity topicEntity) {
+            //write code here for compare name
+            return topicEntity.description.compareTo(this.description);
+        }
 
         public String getUid() {
             return uid;

@@ -51,6 +51,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+//                System.out.println(String.valueOf(tab.getPosition()));
             }
 
             @Override

@@ -23,7 +23,6 @@ import com.example.kzhu9.myapplication.TopicListAdapter;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -35,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -113,7 +113,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
                     System.out.println("Topic List Fragment Get Data");
-                    System.out.println(responseObj);
                     JSONObject info = responseObj.getJSONObject("info");
                     JSONArray topicsList = info.getJSONArray("topics_list");
 
@@ -128,17 +127,23 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     e.printStackTrace();
                 }
 
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                }
+//                Headers responseHeaders = response.headers();
+//                for (int i = 0; i < responseHeaders.size(); i++) {
+//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                }
             }
         });
     }
 
 
     public void getTopicList(ArrayList<String> topicUidList) {
+
         final int size = topicUidList.size();
+        System.out.println("getTopicList called");
+        topiList.clear();
+        System.out.println("topiList " + topiList.size());
+        System.out.println("topicUidList "+size);
+        System.out.println("Topic List Fragment Render Data");
 
         for (String uid : topicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
@@ -151,8 +156,10 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     .post(formBody)
                     .build();
 
-            if (getActivity() == null)
+            if (getActivity() == null) {
+                System.out.println("can't get activity");
                 return;
+            }
 
             OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
 
@@ -180,12 +187,8 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
                         JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("Topic List Fragment Render Data");
-                        System.out.println(responseObj);
 
                         JSONObject info = responseObj.getJSONObject("info");
-
-                        System.out.println(info);
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -200,13 +203,22 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
                         topiList.add(topicEntity);
 
-                        if (getActivity() == null)
+                        if (getActivity() == null) {
+                            System.out.println("can't get activity");
                             return;
+                        }
+
+                        System.out.println(topiList.size());
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 if (topiList.size() == size) {
+                                    System.out.println("adapter.setList(topiList); called");
+                                    // sort topiList
+
+                                    Collections.sort(topiList);
                                     adapter.setList(topiList);
                                 }
                             }
@@ -216,10 +228,10 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         e.printStackTrace();
                     }
 
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0; i < responseHeaders.size(); i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
+//                    Headers responseHeaders = response.headers();
+//                    for (int i = 0; i < responseHeaders.size(); i++) {
+//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                    }
                 }
             });
         }
@@ -239,6 +251,13 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
         intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("Im resumed");
+        getTopicUidList();
     }
 
     @Override

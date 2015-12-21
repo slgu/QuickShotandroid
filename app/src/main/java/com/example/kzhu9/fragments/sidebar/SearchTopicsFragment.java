@@ -104,7 +104,21 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
 
-                if (topicResults != null) {
+                ArrayList<TopicItems> arrayList = new ArrayList<TopicItems>();
+                System.out.println(topiList.toString());
+                for (TopicList.TopicEntity topicEntity: topiList) {
+                    TopicItems topicItems = new TopicItems();
+                    topicItems.setLatitude(topicEntity.getLat());
+                    topicItems.setLongitude(topicEntity.getLon());
+                    System.out.println("{}{}{}{}{}{}{}{}");
+                    System.out.println(topicItems.getLatitude());
+                    System.out.println(topicItems.getLongitude());
+                    arrayList.add(topicItems);
+                }
+                System.out.println("Now printing arraylist size!");
+                System.out.println(arrayList.size());
+
+                if (arrayList.size() != 0) {
 //                    TopicItems topicItems = new TopicItems();
 //                    topicItems.setLatitude("40.776495");
 //                    topicItems.setLongitude("-73.972667");
@@ -112,8 +126,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                     Intent intent = new Intent(getActivity(), MapActivity.class);
 
-
-                    intent.putParcelableArrayListExtra("123", (ArrayList<? extends Parcelable>) topicResults);
+                    intent.putParcelableArrayListExtra("123", (ArrayList<? extends Parcelable>) arrayList);
 
                     startActivity(intent);
                 } else {
@@ -346,6 +359,11 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         topicEntity.setVideo_uid(info.getString("video_uid"));
                         topicEntity.setLat(info.getString("lat"));
                         topicEntity.setLon(info.getString("lon"));
+
+                        System.out.println("+++++++");
+                        System.out.println(topicEntity.getLat());
+                        System.out.println(topicEntity.getLon());
+
                         topicEntity.setLike(info.getInt("like"));
                         String commentStr = info.getString("comment_list");
                         ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));

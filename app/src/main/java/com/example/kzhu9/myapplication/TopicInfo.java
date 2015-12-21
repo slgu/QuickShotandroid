@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -34,9 +33,12 @@ import java.util.ArrayList;
 public class TopicInfo extends AppCompatActivity {
     Button btComment;
     EditText edComment;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private CommentListAdapter mAdapter;
+    private ArrayList<CommentItem> commentsData = new ArrayList<>();
+
 
 //    MapView mapView;
 //    GoogleMap map;
@@ -60,7 +62,8 @@ public class TopicInfo extends AppCompatActivity {
 
         JSONArray temp = new JSONArray();
 
-        ArrayList<CommentItem> commentsData = new ArrayList<>();
+
+//        final ArrayList<CommentItem> commentsData = new ArrayList<>();
 
         try {
             temp = new JSONArray(comments);
@@ -97,7 +100,7 @@ public class TopicInfo extends AppCompatActivity {
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
-        videoView.start();
+//        videoView.start();
 
 //        mapView = (MapView) findViewById(R.id.mapview_small);
 //        mapView.onCreate(savedInstanceState);
@@ -138,6 +141,9 @@ public class TopicInfo extends AppCompatActivity {
                                 .post(formBody)
                                 .build();
 
+                        final CommentItem item = new CommentItem();
+                        item.setText(edComment.getText().toString());
+
                         OkHttpSingleton.getInstance().getClient(getApplicationContext()).newCall(request).enqueue(new Callback() {
                             @Override
                             public void onFailure(Request request, IOException throwable) {
@@ -156,7 +162,7 @@ public class TopicInfo extends AppCompatActivity {
                                     throw new IOException("Unexpected code " + response);
 
                                 String responseStr = response.body().string();
-                                System.out.println(responseStr);
+//                                System.out.println(responseStr);
 
                                 Gson gson = new Gson();
                                 JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
@@ -167,6 +173,7 @@ public class TopicInfo extends AppCompatActivity {
                                     case 0:
                                         resultStr = "Done adding comment!";
                                         // update comment list
+                                        commentsData.add(item);
                                         break;
                                     case 1:
                                         // go back to login activity ???????????????
@@ -188,16 +195,27 @@ public class TopicInfo extends AppCompatActivity {
                                     });
                                 }
 
-                                Headers responseHeaders = response.headers();
-                                for (int i = 0; i < responseHeaders.size(); i++) {
-                                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                                }
+//                                Headers responseHeaders = response.headers();
+//                                for (int i = 0; i < responseHeaders.size(); i++) {
+//                                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                                }
                             }
                         });
                         break;
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.setList(commentsData);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
 

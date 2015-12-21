@@ -175,6 +175,8 @@ public class CreateTopicsFragment extends Fragment {
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL+"/topic/create";
+                File videoFile = new File(path);
+                
 
                 RequestBody requestBody = new MultipartBuilder()
                         .type(MultipartBuilder.FORM)
