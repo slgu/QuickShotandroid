@@ -2,6 +2,7 @@ package com.example.kzhu9.myapplication;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,38 +31,36 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TopicInfo extends AppCompatActivity {
+public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     Button btComment;
     EditText edComment;
+    String topicUid;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private CommentListAdapter mAdapter;
     private ArrayList<CommentItem> commentsData = new ArrayList<>();
-
-
-//    MapView mapView;
-//    GoogleMap map;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_info);
+        mLayoutManager = new LinearLayoutManager(this);
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer_comment);
+
+
+        topicUid = getIntent().getExtras().getString("UID");
         String title = getIntent().getExtras().getString("TITLE");
         String description = getIntent().getExtras().getString("DESCRIPTION");
         int like = getIntent().getExtras().getInt("LIKE");
         String video = getIntent().getExtras().getString("VIDEO");
-        System.out.println(video);
-        String latitude = getIntent().getExtras().getString("LAT");
-        String longitude = getIntent().getExtras().getString("LON");
-
 //        ArrayList<String> com = getIntent().getExtras().getParcelableArrayList("COMMENTLIST");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
         String comments = commentList.substring(1, commentList.length() - 1);
 
         JSONArray temp = new JSONArray();
-
 
 //        final ArrayList<CommentItem> commentsData = new ArrayList<>();
 
@@ -82,15 +81,34 @@ public class TopicInfo extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.comment_list_view);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
+
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+//        commentsData = new ArrayList<CommentItem>();
+//        getCommentList();
+
+//        System.out.println("oncreate");
+//        System.out.println(commentsData.size());
 
         mAdapter = new CommentListAdapter(commentsData);
         mRecyclerView.setAdapter(mAdapter);
 
+        swipeContainer.setOnRefreshListener(this);
 
-//        double lat = Double.parseDouble(latitude);
-//        double lon = Double.parseDouble(longitude);
+//        try {
+//            Thread.sleep(500);
+//            swipeContainer.post(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    swipeContainer.setRefreshing(true);
+//                    dosomething();
+//                }
+//            });
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
 
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
 //
@@ -102,18 +120,6 @@ public class TopicInfo extends AppCompatActivity {
         videoView.setMediaController(mediaController);
 //        videoView.start();
 
-//        mapView = (MapView) findViewById(R.id.mapview_small);
-//        mapView.onCreate(savedInstanceState);
-//        map = mapView.getMap();
-//        map.getUiSettings().setMyLocationButtonEnabled(true);
-//        map.setMyLocationEnabled(true);
-//        MapsInitializer.initialize(this);
-//
-//        System.out.println(latitude + " " + longitude);
-//
-//        CameraUpdate cameraUpdate = CameraUpdateFactory
-//                .newLatLngZoom(new LatLng(lat, lon), 12);
-//        map.animateCamera(cameraUpdate);
 
         btComment = (Button) findViewById(R.id.btComment);
         edComment = (EditText) findViewById(R.id.etComment);
@@ -210,7 +216,134 @@ public class TopicInfo extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.setList(commentsData);
+        System.out.println("TopicInfo is resumed");
+//        getCommentList();
+//        mAdapter.setList(commentsData);
+    }
+
+    public void dosomething() {
+        swipeContainer.setRefreshing(true);
+
+        getCommentList();
+        System.out.println("commentsData size");
+        System.out.println(commentsData.size());
+
+        try {
+            Thread.sleep(2000);
+            mAdapter.setList(commentsData);
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        swipeContainer.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onRefresh() {
+        dosomething();
+    }
+
+    public void getCommentList() {
+        String requestURL = Config.REQUESTURL + "/topic/get";
+
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("uid", topicUid)
+                .build();
+        Request request = new Request.Builder()
+                .url(requestURL)
+                .post(formBody)
+                .build();
+
+        if (this == null) {
+            System.out.println("can't get activity");
+            return;
+        }
+
+        OkHttpSingleton.getInstance().getClient(this.getBaseContext()).newCall(request).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Request request, IOException throwable) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
+                    }
+                });
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (!response.isSuccessful())
+                    throw new IOException("Unexpected code " + response);
+
+                String responseStr = response.body().string();
+
+                try {
+                    TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+
+                    JSONObject responseObj = new JSONObject(responseStr);
+
+                    JSONObject info = responseObj.getJSONObject("info");
+
+//                    System.out.println("print comment_list");
+                    JSONArray array = info.getJSONArray("comment_list");
+//                    System.out.println(commentStr);
+//                    ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+//                    System.out.println(commentList.toString());
+//                    topicEntity.setComments_list(commentList);
+
+//                    String comments = commentStr.substring(1, commentStr.length() - 1);
+
+//                    JSONObject temp;
+                    try {
+
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject com = array.getJSONObject(i);
+                            CommentItem comItem = new CommentItem();
+                            comItem.setName(com.getString("name"));
+                            comItem.setText(com.getString("text"));
+                            comItem.setTime(com.getString("time"));
+                            commentsData.add(comItem);
+                            System.out.println(com.getString("name") +" "+com.getString("text")+ " "+com.getString("time"));
+                        }
+
+//                        mAdapter.setList(commentsData);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (this == null) {
+                        System.out.println("can't get activity");
+                        return;
+                    }
+
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            if (topiList.size() == size) {
+//                                System.out.println("adapter.setList(topiList); called");
+//                                // sort topiList
+//
+//                                Collections.sort(topiList);
+//                                adapter.setList(topiList);
+//                            }
+//                        }
+//                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,9 +36,10 @@ import java.util.ArrayList;
 /**
  * Created by jinliang on 11/15/15.
  */
-public class FriendListFragment extends Fragment implements FriendItemClickListener, FriendItemLongClickListener {
+public class FriendListFragment extends Fragment implements FriendItemClickListener, FriendItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
     private FriendListAdapter adapter;
+    private SwipeRefreshLayout swipeContainer;
 
     final ArrayList<FriendList.FriendEntity> friList = new ArrayList<FriendList.FriendEntity>();
 
@@ -52,12 +54,16 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         View view = inflater.inflate(R.layout.fragment_listview, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.friendList);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_friend);
+
         return view;
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        swipeContainer.setOnRefreshListener(this);
 
         adapter = new FriendListAdapter(getActivity().getApplicationContext());
 
@@ -70,6 +76,21 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
         recyclerView.setHasFixedSize(true);
 
+        getFriendUidList();
+
+
+//        swipeContainer.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                swipeContainer.setRefreshing(true);
+//                dosomething();
+//            }
+//
+//        });
+    }
+
+    public void getFriendUidList() {
+        System.out.println("Im done");
         String requestURL = Config.REQUESTURL + "/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -117,13 +138,31 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                Headers responseHeaders = response.headers();
-//                for (int i = 0; i < responseHeaders.size(); i++) {
-//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                }
             }
         });
+    }
+
+    public void dosomething() {
+        swipeContainer.setRefreshing(true);
+        getFriendUidList();
+//        adapter.setList(friList);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(getActivity(), "Refresh done", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        swipeContainer.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onRefresh() {
+        dosomething();
     }
 
     public void getFriendList(ArrayList<String> friendUidList) {

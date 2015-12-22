@@ -47,7 +47,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -59,6 +58,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by kzhu9 on 11/7/15.
@@ -119,11 +119,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                 System.out.println(arrayList.size());
 
                 if (arrayList.size() != 0) {
-//                    TopicItems topicItems = new TopicItems();
-//                    topicItems.setLatitude("40.776495");
-//                    topicItems.setLongitude("-73.972667");
-//                    topicResults.add(topicItems);
-
                     Intent intent = new Intent(getActivity(), MapActivity.class);
 
                     intent.putParcelableArrayListExtra("123", (ArrayList<? extends Parcelable>) arrayList);
@@ -160,7 +155,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
             @Override
             public boolean onQueryTextSubmit(String newText) {
-//                searchMap.setVisibility(View.INVISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
 
                 // Step 1. pre execute show pd
@@ -212,6 +206,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         String responseStr = response.body().string();
                         System.out.println("topic find reponse format");
                         System.out.println(responseStr);
+                        if (!topiList.isEmpty())
+                            topiList.clear();
                         try {
                             JSONObject responseObj = new JSONObject(responseStr);
                             System.out.println("Topic Search List Fragment Get Data");
@@ -224,6 +220,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                             if (!topicResults.isEmpty())
                                 topicResults.clear();
+
                             for (int i = 0; i < topicList.length(); i++) {
                                 tempTopic = new TopicItems();
 
@@ -251,6 +248,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
+                                            Collections.sort(topiList);
 
                                             intent.putExtra("UID", topiList.get(position).getUid());
                                             intent.putExtra("TITLE", topiList.get(position).getTitle());
@@ -272,10 +270,10 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         }
 
                         pd.dismiss();
-                        Headers responseHeaders = response.headers();
-                        for (int i = 0; i < responseHeaders.size(); i++) {
-                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                        }
+//                        Headers responseHeaders = response.headers();
+//                        for (int i = 0; i < responseHeaders.size(); i++) {
+//                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                        }
                     }
                 });
 
@@ -304,89 +302,12 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
         map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 
-    public void getTopicList(ArrayList<String> topicUidList) {
-        final int size = topicUidList.size();
-        System.out.println("this is topicUidList size.");
-        System.out.println(size);
-
-        for (String uid : topicUidList) {
-            String requestURL = Config.REQUESTURL + "/topic/get";
-
-            RequestBody formBody = new FormEncodingBuilder()
-                    .add("uid", uid)
-                    .build();
-            Request request = new Request.Builder()
-                    .url(requestURL)
-                    .post(formBody)
-                    .build();
-
-            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
-
-                @Override
-                public void onFailure(Request request, IOException throwable) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Toast.makeText(getActivity(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    throwable.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (!response.isSuccessful())
-                        throw new IOException("Unexpected code " + response);
-
-                    String responseStr = response.body().string();
-
-                    try {
-
-                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
-
-                        JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("Topic List Fragment Render Data");
-                        System.out.println(responseObj);
-
-                        JSONObject info = responseObj.getJSONObject("info");
-
-                        System.out.println(info);
-
-                        topicEntity.setUid(info.getString("uid"));
-                        topicEntity.setTitle(info.getString("title"));
-                        topicEntity.setDescription(info.getString("desc"));
-                        topicEntity.setVideo_uid(info.getString("video_uid"));
-                        topicEntity.setLat(info.getString("lat"));
-                        topicEntity.setLon(info.getString("lon"));
-
-                        System.out.println("+++++++");
-                        System.out.println(topicEntity.getLat());
-                        System.out.println(topicEntity.getLon());
-
-                        topicEntity.setLike(info.getInt("like"));
-                        String commentStr = info.getString("comment_list");
-                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
-                        topicEntity.setComments_list(commentList);
-
-                        topiList.add(topicEntity);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0; i < responseHeaders.size(); i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
-                }
-            });
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_location:
+                if (!topiList.isEmpty())
+                    topiList.clear();
                 String requestURL;
                 final ProgressDialog pd;
 
@@ -413,8 +334,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                 Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
-                System.out.println("now printing latitude and longitude");
-                System.out.println(latitude + " + " + longitude);
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL + "/topic/find";
@@ -456,13 +375,11 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         }
 
                         String responseStr = response.body().string();
-                        System.out.println("topic find reponse format");
-                        System.out.println(responseStr);
+                        System.out.println("Location button clicked");
+
                         try {
                             JSONArray topicList;
                             JSONObject responseObj = new JSONObject(responseStr);
-                            System.out.println("Topic Search List Fragment Get Data");
-                            System.out.println(responseObj);
                             topicList = responseObj.getJSONArray("info");
 
                             TopicItems tempTopic;
@@ -471,6 +388,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                             if (!topicResults.isEmpty())
                                 topicResults.clear();
+
                             for (int i = 0; i < topicList.length(); i++) {
                                 tempTopic = new TopicItems();
 
@@ -479,6 +397,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 tempTopic.setUid(obj.getString("uid"));
                                 tempTopic.setTitle(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
+
+                                System.out.println("uid " +obj.getString("uid")+ " title "+obj.getString("title"));
 
                                 uidList.add(obj.getString("uid"));
 
@@ -491,14 +411,18 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 @Override
                                 public void run() {
                                     pd.dismiss();
-                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    // things shown after location button is clicked
+//                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
                                     search.clearFocus();
 
+                                    // onclick on each item clicked
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
+//                                            Collections.sort(topiList);
 
+                                            System.out.println(topiList.get(position).getDescription()+" is clicked");
                                             intent.putExtra("UID", topiList.get(position).getUid());
                                             intent.putExtra("TITLE", topiList.get(position).getTitle());
                                             intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
@@ -519,10 +443,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         }
 
                         pd.dismiss();
-                        Headers responseHeaders = response.headers();
-                        for (int i = 0; i < responseHeaders.size(); i++) {
-                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                        }
                     }
                 });
 
@@ -544,6 +464,98 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void getTopicList(ArrayList<String> topicUidList) {
+        final int size = topicUidList.size();
+//        System.out.println("this is topicUidList size.");
+//        System.out.println(size);
+        if (!topiList.isEmpty())
+            topiList.clear();
+
+        for (final String uid : topicUidList) {
+//            System.out.println("first time");
+//            System.out.println(uid);
+
+
+            String requestURL = Config.REQUESTURL + "/topic/get";
+
+            RequestBody formBody = new FormEncodingBuilder()
+                    .add("uid", uid)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(requestURL)
+                    .post(formBody)
+                    .build();
+
+            OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Request request, IOException throwable) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Toast.makeText(getActivity(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    throwable.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (!response.isSuccessful())
+                        throw new IOException("Unexpected code " + response);
+
+                    String responseStr = response.body().string();
+
+                    try {
+//                        System.out.println(uid);
+
+                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+
+                        JSONObject responseObj = new JSONObject(responseStr);
+                        System.out.println("Search Location Topic List Fragment Render Data");
+                        System.out.println(responseObj);
+
+                        JSONObject info = responseObj.getJSONObject("info");
+
+                        topicEntity.setUid(info.getString("uid"));
+                        topicEntity.setTitle(info.getString("title"));
+                        topicEntity.setDescription(info.getString("desc"));
+                        topicEntity.setVideo_uid(info.getString("video_uid"));
+                        topicEntity.setLat(info.getString("lat"));
+                        topicEntity.setLon(info.getString("lon"));
+
+                        topicEntity.setLike(info.getInt("like"));
+                        String commentStr = info.getString("comment_list");
+                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                        topicEntity.setComments_list(commentList);
+
+                        topiList.add(topicEntity);
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (topiList.size() == size) {
+                                    System.out.println("setAdapter called");
+                                    // sort topiList
+
+//                                    Collections.sort(topiList);
+                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                }
+                            }
+                        });
+
+
+                        System.out.println(topiList.size());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     class SearchResultsAdapter extends BaseAdapter {

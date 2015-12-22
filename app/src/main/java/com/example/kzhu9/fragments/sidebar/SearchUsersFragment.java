@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -52,6 +54,7 @@ public class SearchUsersFragment extends Fragment {
     SearchView search;
     ListView searchResults;
     View rootview;
+    MenuItem searchItem;
     ArrayList<FriendItems> friendResults = new ArrayList<FriendItems>();
 
     @Override
@@ -61,12 +64,14 @@ public class SearchUsersFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_search, menu);
 
-        search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchItem = menu.findItem(R.id.action_search);
+        search = (SearchView) searchItem.getActionView();
         search.setSubmitButtonEnabled(true);
         search.setQueryHint("Search Users...");
+
 
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchfriends);
 
@@ -196,7 +201,33 @@ public class SearchUsersFragment extends Fragment {
                 return true;
             }
         });
+
+        MenuItemCompat.setOnActionExpandListener(searchItem,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        System.out.println("search item is closed");
+                        setItemsVisibility(menu, searchItem, true);
+                        return true;  // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        System.out.println("search item is clicked");
+                        setItemsVisibility(menu, searchItem, false);
+                        return true;  // Return true to expand action view
+                    }
+                }
+        );
     }
+
+    private void setItemsVisibility(Menu menu, MenuItem exception, boolean visible) {
+        for (int i=0; i<menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception) item.setVisible(visible);
+        }
+    }
+
 
     @Nullable
     @Override

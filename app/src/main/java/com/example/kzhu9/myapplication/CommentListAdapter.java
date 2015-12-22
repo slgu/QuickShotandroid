@@ -22,12 +22,25 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListViewHold
    public CommentListAdapter(Context context) {
        list = new ArrayList<>();
    }
+    public CommentListAdapter() {
+
+    }
 
    //
    public void setList(ArrayList<CommentItem> data) {
 //        list = data;
-//       list.clear();
-       list.addAll(data);
+       System.out.println("data size");
+       System.out.println(data.size());
+
+       list.clear();
+       System.out.println("list is cleared");
+       for (CommentItem commentItem : data) {
+           list.add(commentItem);
+           System.out.println(commentItem.getName() + " " + commentItem.getText() + " " + commentItem.getTime());
+       }
+//       list.addAll(data);
+       System.out.println("list size");
+       System.out.println(list.size());
 //        notifyItemChanged(0, list.size());
        notifyDataSetChanged();
    }

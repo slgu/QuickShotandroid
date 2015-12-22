@@ -16,6 +16,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.geojson.GeoJsonFeature;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.google.maps.android.geojson.GeoJsonPointStyle;
@@ -58,7 +59,6 @@ public class MapViewFragment extends Fragment {
         }
         JSONObject json = arrayListToGeoJson(t);
 
-
         GeoJsonLayer layer = new GeoJsonLayer(map, json);
 //        GeoJsonLayer layer = null;
 //        try {
@@ -76,8 +76,16 @@ public class MapViewFragment extends Fragment {
                 .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         pointStyle.setAnchor(0.1f, 0.1f);
 
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override public boolean onMarkerClick(Marker marker) {
+                // do something
+                return true;
+            }
+        });
+
         for (GeoJsonFeature feature : layer.getFeatures()) {
             feature.setPointStyle(pointStyle);
+
         }
         layer.addLayerToMap();
 
