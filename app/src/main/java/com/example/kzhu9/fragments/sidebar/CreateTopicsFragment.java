@@ -29,8 +29,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.LoginActivity;
 import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.SelfInfo;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -163,9 +165,11 @@ public class CreateTopicsFragment extends Fragment {
             public void onClick(View v) {
                 title = topicName.getText().toString();
                 description = topicDiscription.getText().toString();
+
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bmThumbnail.compress(Bitmap.CompressFormat.PNG, 30, stream);
                 byte[] byteArray = stream.toByteArray();
+//                String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
                 // Step 1. pre execute show pd
                 pd = new ProgressDialog(getActivity());
@@ -176,8 +180,7 @@ public class CreateTopicsFragment extends Fragment {
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL+"/topic/create";
-                File videoFile = new File(path);
-                
+//                File videoFile = new File(path);
 
                 RequestBody requestBody = new MultipartBuilder()
                         .type(MultipartBuilder.FORM)
@@ -197,7 +200,6 @@ public class CreateTopicsFragment extends Fragment {
                         .url(requestURL)
                         .post(requestBody)
                         .build();
-
 
                 OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
                     @Override
@@ -232,8 +234,10 @@ public class CreateTopicsFragment extends Fragment {
                                 resultStr = "Upload successfully!";
                                 break;
                             case 1:
+                                SelfInfo.clear();
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
 
-                                // go back to login activity ???????????????
+                                getActivity().finish();
                                 break;
                             case 2:
                                 resultStr = "Null parameter!";

@@ -50,6 +50,7 @@ public class FriendList {
         private int sex;
         private int age;
         private String address;
+        private String img_uid;
         private String friends_list;
         private String topics_list;
 
@@ -115,6 +116,14 @@ public class FriendList {
 
         public String getAddress() {
             return address;
+        }
+
+        public String getImg_uid() {
+            return img_uid;
+        }
+
+        public void setImg_uid(String img_uid) {
+            this.img_uid = img_uid;
         }
 
         public String getFriends_list() {

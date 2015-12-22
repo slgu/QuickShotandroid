@@ -1,6 +1,9 @@
 package com.example.kzhu9.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -37,6 +40,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -64,11 +70,40 @@ public class MainActivity extends AppCompatActivity
         TextView profileName = (TextView) header.findViewById(R.id.profile_name);
         profileName.setText(SelfInfo.name);
 
-//        ImageView profilePic = (ImageView) header.findViewById(R.id.profile_pic);
-//        profilePic.setImageURI();
+        new DownloadImage().setHeader(header).execute(SelfInfo.img_uid);
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
+    }
+
+    private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+        View header;
+        public DownloadImage setHeader(View header) {
+            this.header = header;
+            return this;
+        }
+        protected Bitmap doInBackground(String... urls) {
+            return getBitmapFromURL(urls[0]);
+        }
+        protected void onPostExecute(Bitmap result) {
+            ImageView img = (ImageView) header.findViewById(R.id.profile_pic);
+            img.setImageBitmap(Bitmap.createScaledBitmap(result, 180, 180, false));
+        }
+    }
+
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -185,6 +220,7 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // return to login
                             Toast.makeText(getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -198,6 +234,7 @@ public class MainActivity extends AppCompatActivity
 
                     switch (jsonObject.getInt("status")) {
                         case 0:
+                            SelfInfo.clear();
                             startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
                             finish();

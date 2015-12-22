@@ -56,9 +56,20 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         recyclerView = (RecyclerView) view.findViewById(R.id.friendList);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_friend);
 
+        try {
+            Thread.sleep(500);
+            swipeContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(true);
+                    dosomething();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return view;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -90,6 +101,9 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                 .url(requestURL)
                 .post(formBody)
                 .build();
+
+        if (getActivity() == null)
+            return;
 
         OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
             @Override
@@ -136,6 +150,8 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         swipeContainer.setRefreshing(true);
         getFriendUidList();
 
+        if (getActivity() == null)
+            return;
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -200,6 +216,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                         friendList = new JSONObject(responseStr);
                         info = friendList.getJSONObject("info");
+                        System.out.println(info);
 
                         friendEntity.setEmail(info.getString("email"));
                         friendEntity.setName(info.getString("name"));
@@ -207,22 +224,21 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         friendEntity.setSex(info.getInt("sex"));
                         friendEntity.setAge(info.getInt("age"));
                         friendEntity.setAddress(info.getString("address"));
+                        friendEntity.setImg_uid(info.getString("img_uid"));
 
                         friList.add(friendEntity);
 
                         if(getActivity() == null)
                             return;
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (friList.size() == size) {
+                        if (friList.size() == size) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                                     adapter.setList(friList);
                                 }
-                            }
-                        });
-
-
+                            });
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

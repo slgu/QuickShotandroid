@@ -1,12 +1,11 @@
 package com.example.kzhu9.fragments.sidebar;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,11 +48,12 @@ import java.util.Arrays;
  * Created by kzhu9 on 11/7/15.
  */
 
-public class RecommendationFragment extends Fragment {
+public class RecommendationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
     ListView searchResults;
     View rootview;
     ArrayList<TopicItems> topicResults = new ArrayList<TopicItems>();
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,20 +61,60 @@ public class RecommendationFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    @Nullable
     @Override
-    public void onCreateOptionsMenu(Menu menu, final MenuInflater inflater) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootview = inflater.inflate(R.layout.fragment_recommendations, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Recommendations");
+        swipeContainer = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeContainer_recommendation);
+        try {
+            Thread.sleep(500);
+            swipeContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(true);
+                    dosomething();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return rootview;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        swipeContainer.setOnRefreshListener(this);
+    }
+
+    public void dosomething() {
+        swipeContainer.setRefreshing(true);
+        getRecommendationUidList();
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(getActivity(), "Recommendation Refreshed!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        swipeContainer.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onRefresh() {
+        dosomething();
+    }
+
+    public void getRecommendationUidList() {
         String requestURL;
-        final ProgressDialog pd;
 
         searchResults = (ListView) rootview.findViewById(R.id.listview_recommendations);
         searchResults.setVisibility(View.VISIBLE);
-
-        // Step 1. pre execute show pd
-        pd = new ProgressDialog(getActivity());
-        pd.setCancelable(false);
-        pd.setMessage("Searching...");
-        pd.getWindow().setGravity(Gravity.CENTER);
-        pd.show();
 
         // Step 2. Get data
         requestURL = Config.REQUESTURL + "/topic/recommend";
@@ -92,7 +132,6 @@ public class RecommendationFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pd.dismiss();
                         Toast.makeText(getActivity(), "Unable to connect to server, please try later", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -106,7 +145,6 @@ public class RecommendationFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pd.dismiss();
                             Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -149,7 +187,6 @@ public class RecommendationFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pd.dismiss();
                             searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
 
                             searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -172,11 +209,9 @@ public class RecommendationFragment extends Fragment {
                         }
                     });
                 } catch (JSONException e) {
-                    pd.dismiss();
                     e.printStackTrace();
                 }
 
-                pd.dismiss();
                 Headers responseHeaders = response.headers();
                 for (int i = 0; i < responseHeaders.size(); i++) {
                     System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
@@ -185,12 +220,17 @@ public class RecommendationFragment extends Fragment {
         });
     }
 
-    public void getTopicList(ArrayList<String> topicUidList) {
-        final int size = topicUidList.size();
-        System.out.println("this is topicUidList size.");
+    @Override
+    public void onCreateOptionsMenu(Menu menu, final MenuInflater inflater) {
+        getRecommendationUidList();
+    }
+
+    public void getTopicList(ArrayList<String> recommendTopicUidList) {
+        final int size = recommendTopicUidList.size();
+        System.out.println("this is recommendTopicUidList size.");
         System.out.println(size);
 
-        for (String uid : topicUidList) {
+        for (String uid : recommendTopicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
 
             RequestBody formBody = new FormEncodingBuilder()
@@ -259,14 +299,6 @@ public class RecommendationFragment extends Fragment {
         }
     }
 
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootview = inflater.inflate(R.layout.fragment_recommendations, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("Recommendations");
-        return rootview;
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -394,6 +426,13 @@ public class RecommendationFragment extends Fragment {
             TextView topic_title;
             TextView topic_description;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("Im resumed");
+        getRecommendationUidList();
     }
 }
 

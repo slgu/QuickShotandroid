@@ -58,6 +58,18 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
         recyclerView = (RecyclerView) view.findViewById(R.id.topicList);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_topic);
+        try {
+            Thread.sleep(500);
+            swipeContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(true);
+                    dosomething();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return view;
     }
 
@@ -91,6 +103,8 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 .post(formBody)
                 .build();
 
+        if (getActivity() == null)
+            return;
         OkHttpSingleton.getInstance().getClient(getActivity().getApplicationContext()).newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException throwable) {
@@ -106,30 +120,79 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
             @Override
             public void onResponse(Response response) throws IOException {
-                if (!response.isSuccessful())
+//                if (!response.isSuccessful())
+//                    throw new IOException("Unexpected code " + response);
+//
+//                String responseStr = response.body().string();
+//                System.out.println(responseStr);
+//
+//                try {
+//                    JSONObject responseObj = new JSONObject(responseStr);
+//                    JSONObject info = responseObj.getJSONObject("info");
+//                    JSONArray topicsList = info.getJSONArray("topics_list");
+//
+//                    ArrayList<String> uidList = new ArrayList<>();
+//
+//                    for (int i = 0; i < topicsList.length(); i++) {
+//                        uidList.add(topicsList.getString(i));
+//                    }
+//                    getTopicList(uidList);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+                if (!response.isSuccessful()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity().getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                    // need to re-login
                     throw new IOException("Unexpected code " + response);
+                }
 
                 String responseStr = response.body().string();
 
+                if (!topiList.isEmpty())
+                    topiList.clear();
                 try {
-                    JSONArray responseArr = new JSONArray(responseStr);
-                    System.out.println("Liked Topic List Fragment Get And Render Data");
+                    JSONObject responseObj = new JSONObject(responseStr);
+                    final JSONArray json_topic_list = responseObj.getJSONArray("info");
+                    if (!topiList.isEmpty())
+                        topiList.clear();
+                    for (int i = 0; i < json_topic_list.length(); i++) {
+                        JSONObject obj = json_topic_list.getJSONObject(i);
+                        try {
+                            TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+                            topicEntity.setUid(obj.getString("uid"));
+                            topicEntity.setTitle(obj.getString("title"));
+                            topicEntity.setDescription(obj.getString("desc"));
+                            topicEntity.setVideo_uid(obj.getString("video_uid"));
+                            topicEntity.setLat(obj.getString("lat"));
+                            topicEntity.setLon(obj.getString("lon"));
+                            topicEntity.setLike(obj.getInt("like"));
+                            topicEntity.setImage_uid(obj.getString("img_uid"));
+                            String commentStr = obj.getString("comment_list");
+                            ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                            topicEntity.setComments_list(commentList);
+                            topiList.add(topicEntity);
+                            if (getActivity() == null)
+                                return;
 
-                    ArrayList<String> uidList = new ArrayList<>();
-
-                    for (int i = 0; i != responseArr.length(); i++) {
-                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
-
-                        JSONObject obj = responseArr.getJSONObject(i);
-
-                        topicEntity.setUid(obj.getString("uid"));
-
-                        uidList.add(obj.getString("uid"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
 
-                    getTopicList(uidList);
-
-                } catch (JSONException e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.setList(topiList);
+                        }
+                    });
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -139,7 +202,9 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
     public void dosomething() {
         swipeContainer.setRefreshing(true);
         getTopicUidList();
-//        adapter.setList(friList);
+
+        if (getActivity() == null)
+            return;
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -148,7 +213,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 Toast.makeText(getActivity(), "Liked Topics Refreshed!", Toast.LENGTH_LONG).show();
             }
         });
-
 
         swipeContainer.setRefreshing(false);
     }
@@ -219,7 +283,7 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
                         topiList.add(topicEntity);
 
-                        if(getActivity() == null)
+                        if (getActivity() == null)
                             return;
 
                         getActivity().runOnUiThread(new Runnable() {
@@ -245,6 +309,9 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(getActivity(), TopicInfo.class);
 
+        if (topiList == null)
+            return;
+
         intent.putExtra("UID", topiList.get(position).getUid());
         intent.putExtra("TITLE", topiList.get(position).getTitle());
         intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
@@ -258,5 +325,14 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
     }
 
     @Override
-    public void onItemLongClick(View view, int position) { }
+    public void onResume() {
+        super.onResume();
+        System.out.println("Im resumed");
+
+        getTopicUidList();
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+    }
 }

@@ -46,6 +46,7 @@ public class MainFragment extends Fragment {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) rootview.findViewById(R.id.pager);
+
         PagerAdapter pagerAdapter = new PagerAdapter(getFragmentManager(), tabLayout.getTabCount());
 
         viewPager.setAdapter(pagerAdapter);

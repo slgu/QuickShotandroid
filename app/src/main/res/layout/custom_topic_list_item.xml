@@ -9,7 +9,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:id="@+id/topicIcon"
+        android:id="@+id/topicImage"
         android:src="@mipmap/ic_launcher"/>
 
     <TextView
@@ -20,7 +20,7 @@
         android:id="@+id/tvTitle"
         android:text="Topic Title"
         android:textAppearance="?android:textAppearanceLarge"
-        android:layout_toRightOf="@id/topicIcon"/>
+        android:layout_toRightOf="@id/topicImage"/>
 
     <TextView
         android:padding="6dp"
@@ -29,7 +29,7 @@
         android:id="@+id/tvDescribe"
         android:text="Topic Description"
         android:layout_below="@id/tvTitle"
-        android:layout_toRightOf="@id/topicIcon"/>
+        android:layout_toRightOf="@id/topicImage"/>
 
     <TextView
         android:padding="6dp"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/num_like"
         android:text="Like:"
-        android:layout_toRightOf="@id/topicIcon"
+        android:layout_toRightOf="@id/topicImage"
         android:layout_below="@id/tvDescribe" />
 
     <TextView

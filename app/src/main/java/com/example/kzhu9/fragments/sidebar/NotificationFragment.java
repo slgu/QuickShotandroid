@@ -1,12 +1,10 @@
 package com.example.kzhu9.fragments.sidebar;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,14 +65,6 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
 
     public void getNotifications() {
         String requestURL;
-        final ProgressDialog pd;
-
-        // Step 1. pre execute show pd
-        pd = new ProgressDialog(getActivity());
-        pd.setCancelable(false);
-        pd.setMessage("Searching...");
-        pd.getWindow().setGravity(Gravity.CENTER);
-        pd.show();
 
         // Step 2. Get data
         requestURL = Config.REQUESTURL + "/user/notify";
@@ -92,7 +82,6 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pd.dismiss();
                         Toast.makeText(getActivity(), "Unable to connect to server, please try later", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -101,7 +90,6 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
 
             @Override
             public void onResponse(Response response) throws IOException {
-                pd.dismiss();
 
                 if (!response.isSuccessful())
                     throw new IOException("Unexpected code " + response);
@@ -141,16 +129,13 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pd.dismiss();
                             searchResults.setAdapter(new searchResultsAdapter(getActivity(), notificationResults));
                         }
                     });
                 } catch (JSONException e) {
-                    pd.dismiss();
                     e.printStackTrace();
                 }
 
-                pd.dismiss();
                 Headers responseHeaders = response.headers();
                 for (int i = 0; i < responseHeaders.size(); i++) {
                     System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
@@ -166,6 +151,18 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
         rootview = inflater.inflate(R.layout.fragment_notifications, container, false);
         swipeContainer = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeContainer_notification);
         ((MainActivity) getActivity()).setActionBarTitle("Notifications");
+        try {
+            Thread.sleep(500);
+            swipeContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(true);
+                    dosomething();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return rootview;
     }
 

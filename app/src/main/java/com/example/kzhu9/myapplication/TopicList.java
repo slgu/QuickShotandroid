@@ -33,8 +33,8 @@ public class TopicList{
         private String lat;
         private String lon;
         private int like;
+        private String image_uid;
         private String video_uid;
-        private String icon_uid;
         private ArrayList<String> comments_list;
 
         @Override
@@ -99,12 +99,12 @@ public class TopicList{
             this.video_uid = video_uid;
         }
 
-        public String getIcon_uid() {
-            return icon_uid;
+        public String getImage_uid() {
+            return image_uid;
         }
 
-        public void setIcon_uid(String icon_uid) {
-            this.icon_uid = icon_uid;
+        public void setImage_uid(String image_uid) {
+            this.image_uid = image_uid;
         }
 
         public ArrayList<String> getComments_list() {
@@ -125,7 +125,7 @@ public class TopicList{
                     ", lon='" + lon + '\'' +
                     ", like=" + String.valueOf(like) +
                     ", video_uid='" + video_uid + '\'' +
-                    ", icon_uid='" + icon_uid + '\'' +
+                    ", icon_uid='" + image_uid + '\'' +
                     ", comments_list=" + comments_list +
                     '}';
         }

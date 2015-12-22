@@ -35,7 +35,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -59,6 +58,18 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
         recyclerView = (RecyclerView) view.findViewById(R.id.topicList);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_topic);
+        try {
+            Thread.sleep(500);
+            swipeContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(true);
+                    dosomething();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return view;
     }
 
@@ -84,7 +95,9 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     public void dosomething() {
         swipeContainer.setRefreshing(true);
         getTopicUidList();
-//        adapter.setList(friList);
+
+        if (getActivity() == null)
+            return;
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -209,11 +222,13 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         JSONObject responseObj = new JSONObject(responseStr);
 
                         JSONObject info = responseObj.getJSONObject("info");
+                        System.out.println(info);
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
                         topicEntity.setDescription(info.getString("desc"));
                         topicEntity.setVideo_uid(info.getString("video_uid"));
+                        topicEntity.setImage_uid(info.getString("img_uid"));
                         topicEntity.setLat(info.getString("lat"));
                         topicEntity.setLon(info.getString("lon"));
                         topicEntity.setLike(info.getInt("like"));
@@ -229,20 +244,15 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         }
 
                         System.out.println(topiList.size());
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if (topiList.size() == size) {
-                                    System.out.println("adapter.setList(topiList); called");
-                                    // sort topiList
-
-                                    Collections.sort(topiList);
+                        if (size == topiList.size()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //TODO Collections.sort(topiList);
                                     adapter.setList(topiList);
                                 }
-                            }
-                        });
+                            });
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -275,6 +285,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     public void onResume() {
         super.onResume();
         System.out.println("Im resumed");
+
         getTopicUidList();
     }
 

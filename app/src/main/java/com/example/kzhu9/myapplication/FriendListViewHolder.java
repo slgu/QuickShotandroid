@@ -2,12 +2,14 @@ package com.example.kzhu9.myapplication;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
  * Created by jinliang on 12/2/15.
  */
 class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    ImageView friendImage;
     TextView nameText;
     TextView sexView;
     private FriendItemClickListener mListener;
@@ -17,6 +19,7 @@ class FriendListViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         super(itemView);
         nameText = (TextView) itemView.findViewById(R.id.listText);
         sexView = (TextView) itemView.findViewById(R.id.item_sex);
+        friendImage = (ImageView) itemView.findViewById(R.id.friend_image);
 
         this.mListener = listener;
         this.mLongClickListener = longClickListener;

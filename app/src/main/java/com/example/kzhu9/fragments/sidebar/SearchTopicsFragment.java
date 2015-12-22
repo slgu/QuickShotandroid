@@ -59,7 +59,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Created by kzhu9 on 11/7/15.
@@ -208,14 +207,10 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         }
 
                         String responseStr = response.body().string();
-                        System.out.println("topic find reponse format");
-                        System.out.println(responseStr);
                         if (!topiList.isEmpty())
                             topiList.clear();
                         try {
                             JSONObject responseObj = new JSONObject(responseStr);
-                            System.out.println("Topic Search List Fragment Get Data");
-                            System.out.println(responseObj);
                             topicList = responseObj.getJSONArray("info");
 
                             TopicItems tempTopic;
@@ -241,39 +236,41 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                             getTopicList(uidList);
 
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    pd.dismiss();
-                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
-                                    search.clearFocus();
-
-                                    searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            Intent intent = new Intent(getActivity(), TopicInfo.class);
-                                            Collections.sort(topiList);
-
-                                            intent.putExtra("UID", topiList.get(position).getUid());
-                                            intent.putExtra("TITLE", topiList.get(position).getTitle());
-                                            intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
-                                            intent.putExtra("LIKE", topiList.get(position).getLike());
-                                            intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
-                                            intent.putExtra("LAT", topiList.get(position).getLat());
-                                            intent.putExtra("LON", topiList.get(position).getLon());
-                                            intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
-
-                                            startActivity(intent);
-                                        }
-                                    });
-                                }
-                            });
                         } catch (JSONException e) {
                             pd.dismiss();
                             e.printStackTrace();
                         }
 
                         pd.dismiss();
+                    }
+                });
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pd.dismiss();
+                        searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                        search.clearFocus();
+
+                        searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(getActivity(), TopicInfo.class);
+//                                            Collections.sort(topiList);
+                                System.out.println(topiList.get(position).getDescription() + " is clicked");
+
+                                intent.putExtra("UID", topiList.get(position).getUid());
+                                intent.putExtra("TITLE", topiList.get(position).getTitle());
+                                intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
+                                intent.putExtra("LIKE", topiList.get(position).getLike());
+                                intent.putExtra("VIDEO", topiList.get(position).getVideo_uid());
+                                intent.putExtra("LAT", topiList.get(position).getLat());
+                                intent.putExtra("LON", topiList.get(position).getLon());
+                                intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
+
+                                startActivity(intent);
+                            }
+                        });
                     }
                 });
 
@@ -290,6 +287,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             }
         });
     }
+
 
     private void setItemsVisibility(Menu menu, MenuItem exception, boolean visible) {
         for (int i=0; i<menu.size(); ++i) {
@@ -420,10 +418,10 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            Intent intent = new Intent(getActivity(), TopicInfo.class);
-//                                            Collections.sort(topiList);
+
 
                                             System.out.println(topiList.get(position).getDescription()+" is clicked");
+                                            Intent intent = new Intent(getActivity(), TopicInfo.class);
                                             intent.putExtra("UID", topiList.get(position).getUid());
                                             intent.putExtra("TITLE", topiList.get(position).getTitle());
                                             intent.putExtra("DESCRIPTION", topiList.get(position).getDescription());
@@ -477,9 +475,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             topiList.clear();
 
         for (final String uid : topicUidList) {
-//            System.out.println("first time");
-//            System.out.println(uid);
-
 
             String requestURL = Config.REQUESTURL + "/topic/get";
 
@@ -537,30 +532,42 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                         topiList.add(topicEntity);
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if (topiList.size() == size) {
-
-                                    System.out.println("setAdapter called");
-                                    // sort topiList
-
-//                                    Collections.sort(topiList);
-                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
-                                    fab.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-
-
+                        System.out.println("topiList.size()");
                         System.out.println(topiList.size());
+
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         }
+
+        while (topiList.size() != size) {
+            try {
+                Thread.sleep(50);
+                System.out.println("Im sleeping");
+                System.out.println("Current size is " +topiList.size());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                System.out.println("in runnable " + topiList.size());
+
+                if (topiList.size() == size) {
+
+                    System.out.println("SearchResultsAdapter called");
+
+                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                    fab.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     class SearchResultsAdapter extends BaseAdapter {

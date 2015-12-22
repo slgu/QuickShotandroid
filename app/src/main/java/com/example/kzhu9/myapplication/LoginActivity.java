@@ -96,6 +96,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Config.user_id = jsonObject.getString("uid");
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
+                                    SelfInfo.clear();
+                                    try {
+                                        while (SelfInfo.name != null) {
+                                            Thread.sleep(50);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
                                     getSelfInfo();
 
                                     try {
@@ -175,12 +184,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     friendList = new JSONObject(responseStr);
                     info = friendList.getJSONObject("info");
+                    SelfInfo.clear();
 
                     SelfInfo.address = info.getString("address");
                     SelfInfo.sex = info.getInt("sex");
                     SelfInfo.age = info.getInt("age");
                     SelfInfo.email = info.getString("email");
                     SelfInfo.topics_list = info.getString("topics_list");
+                    SelfInfo.img_uid = info.getString("img_uid");
                     SelfInfo.name = info.getString("name");
 
                 } catch (JSONException e) {
