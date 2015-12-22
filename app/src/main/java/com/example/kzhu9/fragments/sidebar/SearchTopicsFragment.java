@@ -113,9 +113,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                     topicItems.setLongitude(topicEntity.getLon());
                     topicItems.setTitle(topicEntity.getTitle());
                     topicItems.setDescription(topicEntity.getDescription());
-                    System.out.println("{}{}{}{}{}{}{}{}");
-                    System.out.println(topicItems.getLatitude());
-                    System.out.println(topicItems.getLongitude());
                     arrayList.add(topicItems);
                 }
                 System.out.println("Now printing arraylist size!");

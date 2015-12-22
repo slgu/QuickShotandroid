@@ -56,6 +56,7 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
         String description = getIntent().getExtras().getString("DESCRIPTION");
         int like = getIntent().getExtras().getInt("LIKE");
         String video = getIntent().getExtras().getString("VIDEO");
+        String image = getIntent().getExtras().getString("IMAGE");
 //        ArrayList<String> com = getIntent().getExtras().getParcelableArrayList("COMMENTLIST");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
         String comments = commentList.substring(1, commentList.length() - 1);
@@ -178,8 +179,14 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                                 switch (status) {
                                     case 0:
                                         resultStr = "Done adding comment!";
+                                        //refressh
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dosomething();
+                                            }
+                                        });
                                         // update comment list
-                                        commentsData.add(item);
                                         break;
                                     case 1:
                                         // go back to login activity ???????????????
@@ -230,9 +237,7 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
 
         try {
             Thread.sleep(2000);
-            mAdapter.setList(commentsData);
-
-
+            mAdapter.notifyDataSetChanged();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -262,6 +267,7 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
             System.out.println("can't get activity");
             return;
         }
+        commentsData.clear();
 
         OkHttpSingleton.getInstance().getClient(this.getBaseContext()).newCall(request).enqueue(new Callback() {
 

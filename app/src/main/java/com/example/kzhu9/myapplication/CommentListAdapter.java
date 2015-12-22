@@ -29,14 +29,13 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListViewHold
    //
    public void setList(ArrayList<CommentItem> data) {
 //        list = data;
+       list.clear();
        System.out.println("data size");
        System.out.println(data.size());
-
-       list.clear();
        System.out.println("list is cleared");
-       for (CommentItem commentItem : data) {
-           list.add(commentItem);
-           System.out.println(commentItem.getName() + " " + commentItem.getText() + " " + commentItem.getTime());
+       for (int i = 0; i < data.size(); ++i) {
+           System.out.println("fuck");
+           list.add(data.get(i));
        }
 //       list.addAll(data);
        System.out.println("list size");
