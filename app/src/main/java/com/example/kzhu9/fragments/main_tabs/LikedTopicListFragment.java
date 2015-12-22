@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,15 +40,15 @@ import java.util.Arrays;
  * Created by jinliang on 11/15/15.
  */
 
-public class LikedTopicListFragment extends Fragment implements TopicItemClickListener, TopicItemLongClickListener {
+public class LikedTopicListFragment extends Fragment implements TopicItemClickListener, TopicItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
     private TopicListAdapter adapter;
     final ArrayList<TopicList.TopicEntity> topiList = new ArrayList<>();
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        adapter = new FriendListAdapter();
     }
 
     @Nullable
@@ -56,12 +57,14 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
         View view = inflater.inflate(R.layout.fragment_topic_listview, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.topicList);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_topic);
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        swipeContainer.setOnRefreshListener(this);
 
         adapter = new TopicListAdapter(getActivity().getApplicationContext());
 
@@ -74,6 +77,10 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
         recyclerView.setHasFixedSize(true);
 
+        getTopicUidList();
+    }
+
+    public void getTopicUidList() {
         String requestURL = Config.REQUESTURL + "/user/like";
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -125,13 +132,31 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                Headers responseHeaders = response.headers();
-//                for (int i = 0; i < responseHeaders.size(); i++) {
-//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                }
             }
         });
+    }
+
+    public void dosomething() {
+        swipeContainer.setRefreshing(true);
+        getTopicUidList();
+//        adapter.setList(friList);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(getActivity(), "Liked Topics Refreshed!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        swipeContainer.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onRefresh() {
+        dosomething();
     }
 
     public void getTopicList(ArrayList<String> topicUidList) {
@@ -211,11 +236,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0; i < responseHeaders.size(); i++) {
-//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
                 }
             });
         }

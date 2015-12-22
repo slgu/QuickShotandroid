@@ -1,10 +1,11 @@
 package com.example.kzhu9.fragments.sidebar;
 
-import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,9 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.NotificationItems;
-import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -43,10 +45,11 @@ import java.util.ArrayList;
  * Created by kzhu9 on 11/7/15.
  */
 
-public class NotificationFragment extends Fragment {
+public class NotificationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     ListView searchResults;
     View rootview;
     ArrayList<NotificationItems> notificationResults = new ArrayList<NotificationItems>();
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,11 +59,15 @@ public class NotificationFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, final MenuInflater inflater) {
-        String requestURL;
-        final ProgressDialog pd;
-
         searchResults = (ListView) rootview.findViewById(R.id.listview_notifications);
         searchResults.setVisibility(View.VISIBLE);
+
+        getNotifications();
+    }
+
+    public void getNotifications() {
+        String requestURL;
+        final ProgressDialog pd;
 
         // Step 1. pre execute show pd
         pd = new ProgressDialog(getActivity());
@@ -98,6 +105,8 @@ public class NotificationFragment extends Fragment {
 
                 if (!response.isSuccessful())
                     throw new IOException("Unexpected code " + response);
+
+
 
                 String responseStr = response.body().string();
                 System.out.println(responseStr);
@@ -155,7 +164,37 @@ public class NotificationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_notifications, container, false);
+        swipeContainer = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeContainer_notification);
+        ((MainActivity) getActivity()).setActionBarTitle("Notifications");
         return rootview;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        swipeContainer.setOnRefreshListener(this);
+    }
+
+    public void dosomething() {
+        swipeContainer.setRefreshing(true);
+        getNotifications();
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(getActivity(), "Notification Refreshed!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        swipeContainer.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onRefresh() {
+        dosomething();
     }
 
     @Override

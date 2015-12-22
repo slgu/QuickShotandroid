@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.FriendItems;
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
@@ -233,6 +234,7 @@ public class SearchUsersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_searchfriends, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Search Friends");
         return rootview;
     }
 

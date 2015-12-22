@@ -34,6 +34,7 @@ public class TopicList{
         private String lon;
         private int like;
         private String video_uid;
+        private String icon_uid;
         private ArrayList<String> comments_list;
 
         @Override
@@ -98,12 +99,35 @@ public class TopicList{
             this.video_uid = video_uid;
         }
 
+        public String getIcon_uid() {
+            return icon_uid;
+        }
+
+        public void setIcon_uid(String icon_uid) {
+            this.icon_uid = icon_uid;
+        }
+
         public ArrayList<String> getComments_list() {
             return comments_list;
         }
 
         public void setComments_list(ArrayList<String> comments_list) {
             this.comments_list = comments_list;
+        }
+
+        @Override
+        public String toString() {
+            return "TopicEntity{" +
+                    "uid='" + uid + '\'' +
+                    ", title='" + title + '\'' +
+                    ", description='" + description + '\'' +
+                    ", lat='" + lat + '\'' +
+                    ", lon='" + lon + '\'' +
+                    ", like=" + String.valueOf(like) +
+                    ", video_uid='" + video_uid + '\'' +
+                    ", icon_uid='" + icon_uid + '\'' +
+                    ", comments_list=" + comments_list +
+                    '}';
         }
     }
 }

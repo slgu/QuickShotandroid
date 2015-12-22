@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
@@ -263,6 +264,7 @@ public class RecommendationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_recommendations, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Recommendations");
         return rootview;
     }
 

@@ -16,10 +16,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.geojson.GeoJsonFeature;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
-import com.google.maps.android.geojson.GeoJsonPointStyle;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,42 +49,19 @@ public class MapViewFragment extends Fragment {
         Bundle args = getArguments();
         ArrayList<TopicItems> t = args.getParcelableArrayList("123");
 
-        System.out.println("in mapview fragment print "+t.size());
-        for (TopicItems topicItems: t) {
-            System.out.println("||||||||||||||||||");
-            System.out.println(topicItems.getLatitude());
-            System.out.println(topicItems.getLongitude());
-        }
         JSONObject json = arrayListToGeoJson(t);
 
         GeoJsonLayer layer = new GeoJsonLayer(map, json);
-//        GeoJsonLayer layer = null;
-//        try {
-//            layer =
-//                    new GeoJsonLayer(map, R.raw.geojson, getActivity());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
 
-        GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-        pointStyle.setTitle("Marker at Columbia University");
-        pointStyle.setIcon(BitmapDescriptorFactory
-                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        pointStyle.setAnchor(0.1f, 0.1f);
-
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override public boolean onMarkerClick(Marker marker) {
-                // do something
-                return true;
-            }
-        });
-
-        for (GeoJsonFeature feature : layer.getFeatures()) {
-            feature.setPointStyle(pointStyle);
-
+        for (TopicItems topicItems: t) {
+            map.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.parseDouble(topicItems.getLatitude()), Double.parseDouble(topicItems.getLongitude())))
+                    .title(topicItems.getTitle())
+                    .snippet(topicItems.getDescription())
+                    .icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
+
         layer.addLayerToMap();
 
         return v;

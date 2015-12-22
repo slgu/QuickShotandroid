@@ -2,6 +2,7 @@ package com.example.kzhu9.myapplication;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -11,7 +12,7 @@ import android.widget.TextView;
  */
 
 public class TopicListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
+    ImageView topicIcon;
     TextView tvTitle;
     TextView tvDescribe;
     TextView tvLike;
@@ -24,6 +25,7 @@ public class TopicListViewHolder extends RecyclerView.ViewHolder implements View
         tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
         tvDescribe = (TextView) itemView.findViewById(R.id.tvDescribe);
         tvLike = (TextView) itemView.findViewById(R.id.tvLike);
+        topicIcon = (ImageView) itemView.findViewById(R.id.topicIcon);
         this.mListener = listener;
         this.mLongClickListener = longClickListener;
         itemView.setOnClickListener(this);

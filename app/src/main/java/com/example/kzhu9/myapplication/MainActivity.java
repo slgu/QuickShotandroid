@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
@@ -39,6 +40,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private Boolean exit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +58,20 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        View header = navigationView.getHeaderView(0);
+
+        TextView profileName = (TextView) header.findViewById(R.id.profile_name);
+        profileName.setText(SelfInfo.name);
+
+//        ImageView profilePic = (ImageView) header.findViewById(R.id.profile_pic);
+//        profilePic.setImageURI();
+
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
     }
 
-    private Boolean exit = false;
+
 
     @Override
     public void onBackPressed() {
@@ -208,5 +219,9 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

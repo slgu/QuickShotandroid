@@ -46,6 +46,7 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListViewHolder> 
         TopicList.TopicEntity topic = list.get(position);
 
         holder.tvTitle.setText(topic.getTitle());
+//        holder.topicIcon.setImageURI(topic.getIcon_uid());
         holder.tvDescribe.setText(topic.getDescription());
         holder.tvLike.setText(String.valueOf(topic.getLike()));
     }

@@ -46,10 +46,10 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_info);
+
         mLayoutManager = new LinearLayoutManager(this);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer_comment);
-
 
         topicUid = getIntent().getExtras().getString("UID");
         String title = getIntent().getExtras().getString("TITLE");

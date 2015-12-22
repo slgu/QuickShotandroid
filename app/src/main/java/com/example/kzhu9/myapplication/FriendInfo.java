@@ -24,6 +24,8 @@ public class FriendInfo extends AppCompatActivity {
         String email = getIntent().getExtras().getString("EMAIL");
         String address = getIntent().getExtras().getString("ADDRESS");
 
+        setTitle("Info of "+name);
+
         ((TextView) findViewById(R.id.name)).setText(name);
         ((TextView) findViewById(R.id.age)).setText(String.valueOf(age));
         ((TextView) findViewById(R.id.email)).setText(email);

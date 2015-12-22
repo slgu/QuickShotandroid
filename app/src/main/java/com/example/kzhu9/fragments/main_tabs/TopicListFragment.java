@@ -79,7 +79,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
         recyclerView.setHasFixedSize(true);
 
         getTopicUidList();
-
     }
 
     public void dosomething() {
@@ -91,7 +90,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
             @Override
             public void run() {
 
-                Toast.makeText(getActivity(), "Refresh done", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "My Topics Refreshed!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -152,11 +151,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                Headers responseHeaders = response.headers();
-//                for (int i = 0; i < responseHeaders.size(); i++) {
-//                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                }
             }
         });
     }
@@ -253,11 +247,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0; i < responseHeaders.size(); i++) {
-//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
                 }
             });
         }

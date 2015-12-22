@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
@@ -231,6 +232,7 @@ public class CreateTopicsFragment extends Fragment {
                                 resultStr = "Upload successfully!";
                                 break;
                             case 1:
+
                                 // go back to login activity ???????????????
                                 break;
                             case 2:
@@ -271,6 +273,7 @@ public class CreateTopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_createtopics, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Create Topics");
         return rootview;
     }
 

@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .post(formBody)
                         .build();
 
-
                 OkHttpSingleton.getInstance().getClient(getApplicationContext()).newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException throwable) {
@@ -87,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                         String responseStr = response.body().string();
+                        System.out.println(responseStr);
                         try {
                             JSONObject jsonObject = new JSONObject(responseStr);
                             //change it here
@@ -94,8 +94,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             switch (jsonObject.getInt("status")) {
                                 case 0:
                                     Config.user_id = jsonObject.getString("uid");
-                                    // Jump to the main page
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                                    getSelfInfo();
+
+                                    try {
+                                        while (SelfInfo.name == null) {
+                                            Thread.sleep(50);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    startActivity(intent);
                                     // Finish activity after the back button is pressed
                                     finish();
                                     break;
@@ -124,6 +135,59 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 break;
         }
+    }
+
+    public void getSelfInfo() {
+        String requestURL = Config.REQUESTURL + "/user/get";
+
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("uid", Config.user_id)
+                .build();
+        Request request = new Request.Builder()
+                .url(requestURL)
+                .post(formBody)
+                .build();
+
+        OkHttpSingleton.getInstance().getClient(this.getApplicationContext()).newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException throwable) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(), "Unable to connect to server server, please try later", Toast.LENGTH_LONG).show();
+                    }
+                });
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (!response.isSuccessful())
+                    throw new IOException("Unexpected code " + response);
+
+                String responseStr = response.body().string();
+                System.out.println(responseStr);
+
+                JSONObject friendList;
+                JSONObject info;
+
+                try {
+                    friendList = new JSONObject(responseStr);
+                    info = friendList.getJSONObject("info");
+
+                    SelfInfo.address = info.getString("address");
+                    SelfInfo.sex = info.getInt("sex");
+                    SelfInfo.age = info.getInt("age");
+                    SelfInfo.email = info.getString("email");
+                    SelfInfo.topics_list = info.getString("topics_list");
+                    SelfInfo.name = info.getString("name");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
 

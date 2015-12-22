@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.PagerAdapter;
 import com.example.kzhu9.myapplication.R;
 
@@ -35,6 +36,8 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.activity_main_fragment, container, false);
+
+        ((MainActivity) getActivity()).setActionBarTitle("Main");
 
         TabLayout tabLayout = (TabLayout) rootview.findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("My Friends"));

@@ -23,8 +23,6 @@ public class MapActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 
 
-
-
        Intent intent = getIntent();
        intent.getParcelableArrayListExtra("123");
        Fragment fragment = new MapViewFragment();

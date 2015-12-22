@@ -77,16 +77,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         recyclerView.setHasFixedSize(true);
 
         getFriendUidList();
-
-
-//        swipeContainer.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                swipeContainer.setRefreshing(true);
-//                dosomething();
-//            }
-//
-//        });
     }
 
     public void getFriendUidList() {
@@ -145,13 +135,13 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     public void dosomething() {
         swipeContainer.setRefreshing(true);
         getFriendUidList();
-//        adapter.setList(friList);
+
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                Toast.makeText(getActivity(), "Refresh done", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "My Friends Refreshed!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -236,12 +226,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0; i < responseHeaders.size(); i++) {
-//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
                 }
             });
         }

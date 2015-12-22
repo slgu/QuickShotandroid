@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.MapActivity;
 import com.example.kzhu9.myapplication.R;
 import com.example.kzhu9.myapplication.TopicInfo;
@@ -100,6 +101,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
         searchResults = (ListView) rootview.findViewById(R.id.listview_searchtopics);
         fab = (FloatingActionButton) rootview.findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,6 +112,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                     TopicItems topicItems = new TopicItems();
                     topicItems.setLatitude(topicEntity.getLat());
                     topicItems.setLongitude(topicEntity.getLon());
+                    topicItems.setTitle(topicEntity.getTitle());
+                    topicItems.setDescription(topicEntity.getDescription());
                     System.out.println("{}{}{}{}{}{}{}{}");
                     System.out.println(topicItems.getLatitude());
                     System.out.println(topicItems.getLongitude());
@@ -270,10 +274,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         }
 
                         pd.dismiss();
-//                        Headers responseHeaders = response.headers();
-//                        for (int i = 0; i < responseHeaders.size(); i++) {
-//                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                        }
                     }
                 });
 
@@ -284,6 +284,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             @Override
             public boolean onQueryTextChange(String newText) {
                 searchResults.setVisibility(View.INVISIBLE);
+                fab.setVisibility(View.INVISIBLE);
                 System.out.println("on text chnge text: " + newText);
                 return true;
             }
@@ -433,6 +434,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                             intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
 
                                             startActivity(intent);
+                                            fab.setVisibility(View.VISIBLE);
                                         }
                                     });
                                 }
@@ -458,6 +460,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_searchtopics, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Search Topics");
         return rootview;
     }
 
@@ -539,11 +542,13 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                             public void run() {
 
                                 if (topiList.size() == size) {
+
                                     System.out.println("setAdapter called");
                                     // sort topiList
 
 //                                    Collections.sort(topiList);
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    fab.setVisibility(View.VISIBLE);
                                 }
                             }
                         });
