@@ -15,7 +15,6 @@ public class CommentListViewHolder extends RecyclerView.ViewHolder {
 
    public CommentListViewHolder(View itemView) {
        super(itemView);
-
        nameText = (TextView) itemView.findViewById(R.id.commentUserName);
        timeText = (TextView) itemView.findViewById(R.id.commentTime);
        commentText = (TextView) itemView.findViewById(R.id.commentContent);

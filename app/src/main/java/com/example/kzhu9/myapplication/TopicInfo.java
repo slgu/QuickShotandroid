@@ -59,7 +59,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
         String image = getIntent().getExtras().getString("IMAGE");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
         String comments = commentList.substring(1, commentList.length() - 1);
-
         JSONArray temp = new JSONArray();
 
 //        final ArrayList<CommentItem> commentsData = new ArrayList<>();
@@ -82,11 +81,11 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
         mRecyclerView = (RecyclerView) findViewById(R.id.comment_list_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         mAdapter = new CommentListAdapter(commentsData);
         mRecyclerView.setAdapter(mAdapter);
 
         swipeContainer.setOnRefreshListener(this);
+
 
 //        try {
 //            Thread.sleep(500);

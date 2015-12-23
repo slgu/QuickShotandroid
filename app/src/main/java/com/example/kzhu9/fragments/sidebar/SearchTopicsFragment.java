@@ -61,6 +61,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by kzhu9 on 11/7/15.
@@ -75,6 +77,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     View rootview;
     ArrayList<TopicItems> topicResults = new ArrayList<>();
 
+    //map for multi request
+    ConcurrentHashMap <String, TopicList.TopicEntity> mp = new ConcurrentHashMap<String, TopicList.TopicEntity>();
     private static final int REQUEST_EXTERNAL_LOCATION = 1;
     private static String[] PERMISSIONS_LOCATION = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -420,7 +424,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             //spj for wrong uid
-                                            if (topiList.get(position).getUid() == "-1") {
+                                            if (topiList.get(position).getUid().charAt(0) == '-') {
                                                 return;
                                             }
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
@@ -468,13 +472,13 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void getTopicList(ArrayList<String> topicUidList) {
+    public synchronized void getTopicList(final ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
         System.out.println("this is topicUidList size.");
         System.out.println(size);
         if (!topiList.isEmpty())
             topiList.clear();
-
+        mp.clear();
         for (final String uid : topicUidList) {
 
             String requestURL = Config.REQUESTURL + "/topic/get";
@@ -482,7 +486,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             RequestBody formBody = new FormEncodingBuilder()
                     .add("uid", uid)
                     .build();
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(requestURL)
                     .post(formBody)
                     .build();
@@ -520,7 +524,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         switch (status) {
                             case 0:
                                 JSONObject info = responseObj.getJSONObject("info");
-
                                 topicEntity.setUid(info.getString("uid"));
                                 topicEntity.setTitle(info.getString("title"));
                                 topicEntity.setDescription(info.getString("desc"));
@@ -531,8 +534,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 String commentStr = info.getString("comment_list");
                                 ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
                                 topicEntity.setComments_list(commentList);
-
-                                topiList.add(topicEntity);
+                                //add to map
+                                mp.put(topicEntity.getUid(), topicEntity);
 
 //                                if (topiList.size() == size) {
 //
@@ -547,24 +550,52 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 getActivity().finish();
                                 break;
                             case 2:
-                                topicEntity.setUid("-1");
-                                topiList.add(topicEntity);
-                                return;
+                                //fuck
+                                topicEntity.setUid("-" + uid);
+                                mp.put(topicEntity.getUid(), topicEntity);
+                                break;
                         }
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
-                                fab.setVisibility(View.VISIBLE);
+                        System.out.println("mpsize:" + mp.size());
+                        //request all done
+                        if (mp.size() == topicUidList.size()) {
+                            //add to topic list
+                            for (String key: mp.keySet()) {
+                                System.out.println(key);
                             }
-                        });
+                            for (String uid: topicUidList) {
+                                System.out.println(uid);
+                                if (mp.containsKey(uid)) {
+                                    topiList.add(mp.get(uid));
+                                }
+                                else if (mp.containsKey("-" + uid)) {
+                                    topiList.add(mp.get("-" + uid));
+                                }
+                                else {
+                                    System.out.println("superfuck");
+                                }
+                            }
+                            System.out.println("debugtopic");
+                            for (int i = 0; i < topiList.size(); ++i) {
+                                System.out.println(topiList.get(i).getUid());
+                            }
+                            System.out.println("sizetopi:" + topiList.size());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    fab.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         }
+
     }
 
     class SearchResultsAdapter extends BaseAdapter {
