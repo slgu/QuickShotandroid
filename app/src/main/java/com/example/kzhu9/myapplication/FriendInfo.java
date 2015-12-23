@@ -2,11 +2,11 @@ package com.example.kzhu9.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +32,7 @@ public class FriendInfo extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private FloatingActionButton fab;
     private TopicListAdapter mAdapter;
     private ArrayList<TopicList.TopicEntity> topicsData = new ArrayList<>();
 
@@ -88,6 +89,22 @@ public class FriendInfo extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("message/rfc822");
+                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getIntent().getExtras().getString("EMAIL")});
+                i.putExtra(Intent.EXTRA_SUBJECT, SelfInfo.name +" wants to add you as friend!");
+                i.putExtra(Intent.EXTRA_TEXT, "body of email");
+                try {
+                    startActivity(Intent.createChooser(i, "Send mail..."));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(FriendInfo.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         mRecyclerView.setAdapter(mAdapter);
         getTopicList(topicUidList);
     }
