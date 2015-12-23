@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="4dp"
+    >
 
-    <ImageView
-        android:padding="12dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        android:id="@+id/friend_image"
-        android:src="@mipmap/ic_launcher"/>
-
-    <TextView
-        android:id="@+id/listText"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:text="Friend Name"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:layout_toRightOf="@id/friend_image"/>
+        android:id="@+id/card_view"
+        card_view:cardCornerRadius="0dp"
+        android:layout_gravity="center"
+        >
 
-    <TextView
-        android:id="@+id/text_sex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/listText"
-        android:padding="6dp"
-        android:text="Sex:"
-        android:layout_toRightOf="@id/friend_image"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            >
 
-    <TextView
-        android:id="@+id/item_sex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/listText"
-        android:padding="6dp"
-        android:layout_toRightOf="@id/text_sex"
-        android:text="Male" />
+            <ImageView
 
-</RelativeLayout>
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/friend_image"
+                android:src="@mipmap/ic_launcher"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="16dp"
+                />
+
+            <TextView
+                android:id="@+id/listText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friend Name"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:layout_toRightOf="@id/friend_image"
+                android:elevation="2dp"/>
+
+            <TextView
+                android:id="@+id/text_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/listText"
+                android:text="Sex:"
+                android:layout_toRightOf="@id/friend_image"/>
+
+            <TextView
+                android:id="@+id/item_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/listText"
+                android:layout_toRightOf="@id/text_sex"
+                android:text="Male" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
