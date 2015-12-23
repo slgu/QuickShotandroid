@@ -30,12 +30,38 @@
             android:layout_height="wrap_content"
             android:text="Password"
             android:textColor="@drawable/white" />
-
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Picture"
+            android:textColor="@drawable/white" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/bPicture"
+                android:layout_marginTop="10dp"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/lightBlue"
+                android:text="Select Picture"
+                android:textColor="@drawable/gray" />
+            <ImageView
+                android:layout_width="80dp"
+                android:id="@+id/picturePreview"
+                android:layout_height="80dp"
+                android:layout_marginLeft="50dp"
+                android:layout_toRightOf="@id/bPicture"/>
+
+        </RelativeLayout>
+
+
 
         <TextView
             android:layout_width="wrap_content"
