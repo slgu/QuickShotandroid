@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.FriendItemClickListener;
 import com.example.kzhu9.myapplication.FriendItemLongClickListener;
 import com.example.kzhu9.myapplication.FriendList;
 import com.example.kzhu9.myapplication.FriendListAdapter;
 import com.example.kzhu9.myapplication.R;
-import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -88,6 +88,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
         recyclerView.setHasFixedSize(true);
 
+        System.out.println("activity created");
         getFriendUidList();
     }
 
