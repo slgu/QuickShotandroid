@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.kzhu9.cache.ImgCache;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,7 +58,14 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListViewHolder> 
 
         holder.tvTitle.setText(topic.getTitle());
 
-        new DownloadImage().setHolder(holder).execute(topic.getImage_uid());
+        String url = topic.getImage_uid();
+        Bitmap cacheRes = ImgCache.single().get(url);
+        if (cacheRes == null) {
+            new DownloadImage().setHolder(holder).setUrl(url).execute(url);
+        }
+        else {
+            holder.topicImage.setImageBitmap(cacheRes);
+        }
         holder.tvDescribe.setText(topic.getDescription());
         holder.tvLike.setText(String.valueOf(topic.getLike()));
     }
@@ -67,12 +76,26 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListViewHolder> 
             this.holder = holder;
             return this;
         }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public DownloadImage setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        String url;
+
         protected Bitmap  doInBackground(String... urls) {
             return getBitmapFromURL(urls[0]);
         }
         protected void onPostExecute(Bitmap result) {
             if (result != null) {
                 ImageView img = holder.topicImage;
+                //insert into cache
+                ImgCache.single().put(url, result);
                 img.setImageBitmap(result);
             }
         }

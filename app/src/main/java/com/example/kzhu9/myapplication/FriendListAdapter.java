@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.kzhu9.cache.ImgCache;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -55,7 +57,14 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListViewHolder
         holder.nameText.setText(friend.getName());
         String sex = (friend.getSex() == 0) ? "Male" : "Female";
         holder.sexView.setText(sex);
-        new DownloadImage().setHolder(holder).execute(friend.getImg_uid());
+        Bitmap cacheRes = ImgCache.single().get(friend.getImg_uid());
+        if (cacheRes == null) {
+            //async load
+            new DownloadImage().setHolder(holder).setUrl(friend.getImg_uid()).execute(friend.getImg_uid());
+        }
+        else {
+            holder.friendImage.setImageBitmap(cacheRes);
+        }
     }
 
     private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
@@ -64,11 +73,18 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListViewHolder
             this.holder = holder;
             return this;
         }
+        String url;
+        public DownloadImage setUrl(String url) {
+            this.url = url;
+            return this;
+        }
         protected Bitmap  doInBackground(String... urls) {
             return getBitmapFromURL(urls[0]);
         }
         protected void onPostExecute(Bitmap result) {
             ImageView img = this.holder.friendImage;
+            //add to cache
+            ImgCache.single().put(url, result);
             img.setImageBitmap(result);
         }
     }

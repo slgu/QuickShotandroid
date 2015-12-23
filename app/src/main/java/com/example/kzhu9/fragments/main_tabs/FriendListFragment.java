@@ -223,7 +223,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                         friendList = new JSONObject(responseStr);
                         info = friendList.getJSONObject("info");
-
                         friendEntity.setEmail(info.getString("email"));
                         friendEntity.setName(info.getString("name"));
                         friendEntity.setTopics_list(info.getString("topics_list"));

@@ -46,7 +46,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         bRegister = (Button) findViewById(R.id.bRegister);
         bEmailVerificationCode = (Button) findViewById(R.id.bEmailVerificationCode);
-
         bRegister.setOnClickListener(this);
         bEmailVerificationCode.setOnClickListener(this);
     }
