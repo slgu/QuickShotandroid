@@ -37,7 +37,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.activity_main_fragment, container, false);
 
-        ((MainActivity) getActivity()).setActionBarTitle("Main");
+        ((MainActivity) getActivity()).setActionBarTitle("Profile");
 
         TabLayout tabLayout = (TabLayout) rootview.findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("My Friends"));

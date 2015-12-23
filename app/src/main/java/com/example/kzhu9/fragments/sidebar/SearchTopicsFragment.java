@@ -123,19 +123,18 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
             public void onClick(View view) {
 
                 ArrayList<TopicItems> arrayList = new ArrayList<TopicItems>();
-                System.out.println(topiList.toString());
+
                 for (TopicList.TopicEntity topicEntity: topiList) {
                     TopicItems topicItems = new TopicItems();
+                    topicItems.setUid(topicEntity.getUid());
                     topicItems.setLatitude(topicEntity.getLat());
                     topicItems.setLongitude(topicEntity.getLon());
                     topicItems.setTitle(topicEntity.getTitle());
                     topicItems.setDescription(topicEntity.getDescription());
                     arrayList.add(topicItems);
                 }
-                System.out.println("Now printing arraylist size!");
-                System.out.println(arrayList.size());
 
-                if (arrayList.size() != 0) {
+                if (arrayList.size() == topiList.size()) {
                     Intent intent = new Intent(getActivity(), MapActivity.class);
 
                     intent.putParcelableArrayListExtra("123", (ArrayList<? extends Parcelable>) arrayList);
