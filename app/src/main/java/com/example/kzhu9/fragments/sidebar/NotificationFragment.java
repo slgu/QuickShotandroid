@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -94,10 +93,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                 if (!response.isSuccessful())
                     throw new IOException("Unexpected code " + response);
 
-
-
                 String responseStr = response.body().string();
-                System.out.println(responseStr);
                 try {
                     Gson gson = new Gson();
                     JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
@@ -116,14 +112,11 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                         tempNotification = new NotificationItems();
 
                         JSONObject obj = notificationList.getJSONObject(i);
-                        System.out.println(obj.toString());
 
                         tempNotification.setUid(obj.getString("uid"));
                         tempNotification.setName(obj.getString("name"));
 
                         notificationResults.add(tempNotification);
-
-                        System.out.println(tempNotification.toString());
                     }
 
                     getActivity().runOnUiThread(new Runnable() {
@@ -134,11 +127,6 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                     });
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
-
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
             }
         });
@@ -232,7 +220,6 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
             final NotificationItems tempNotification = notificationDetails.get(position);
-            //System.out.println(tempNotification.toString());
 
             if (convertView == null) {
                 convertView = layoutInflater.inflate(R.layout.shownotification, null);

@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -154,12 +153,8 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                 }
 
                 String responseStr = response.body().string();
-                System.out.println("topic find reponse format");
-                System.out.println(responseStr);
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
-                    System.out.println("Topic Search List Fragment Get Data");
-                    System.out.println(responseObj);
                     topicList = responseObj.getJSONArray("info");
 
                     TopicItems tempTopic;
@@ -211,11 +206,6 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                }
             }
         });
     }
@@ -227,8 +217,6 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
 
     public void getTopicList(ArrayList<String> recommendTopicUidList) {
         final int size = recommendTopicUidList.size();
-        System.out.println("this is recommendTopicUidList size.");
-        System.out.println(size);
 
         for (String uid : recommendTopicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
@@ -263,16 +251,10 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                     String responseStr = response.body().string();
 
                     try {
-
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
-
                         JSONObject responseObj = new JSONObject(responseStr);
-                        System.out.println("Recommendation Fragment Fragment Render Data");
-                        System.out.println(responseObj);
-
                         JSONObject info = responseObj.getJSONObject("info");
 
-                        System.out.println(info);
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -288,11 +270,6 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                         topiList.add(topicEntity);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }
-
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0; i < responseHeaders.size(); i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                     }
                 }
             });
@@ -388,7 +365,6 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                                 throw new IOException("Unexpected code " + response);
 
                             String responseStr = response.body().string();
-                            System.out.println(responseStr);
 
                             Gson gson = new Gson();
                             JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
@@ -431,7 +407,6 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Im resumed");
         getRecommendationUidList();
     }
 }

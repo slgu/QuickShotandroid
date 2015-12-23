@@ -66,7 +66,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListViewHolder
             return this;
         }
         protected Bitmap  doInBackground(String... urls) {
-            System.out.println("doinbackground "+ urls[0] );
             return getBitmapFromURL(urls[0]);
         }
         protected void onPostExecute(Bitmap result) {
@@ -82,8 +81,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListViewHolder
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

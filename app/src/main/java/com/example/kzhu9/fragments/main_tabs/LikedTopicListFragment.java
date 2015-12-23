@@ -120,26 +120,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
             @Override
             public void onResponse(Response response) throws IOException {
-//                if (!response.isSuccessful())
-//                    throw new IOException("Unexpected code " + response);
-//
-//                String responseStr = response.body().string();
-//                System.out.println(responseStr);
-//
-//                try {
-//                    JSONObject responseObj = new JSONObject(responseStr);
-//                    JSONObject info = responseObj.getJSONObject("info");
-//                    JSONArray topicsList = info.getJSONArray("topics_list");
-//
-//                    ArrayList<String> uidList = new ArrayList<>();
-//
-//                    for (int i = 0; i < topicsList.length(); i++) {
-//                        uidList.add(topicsList.getString(i));
-//                    }
-//                    getTopicList(uidList);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
                 if (!response.isSuccessful()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -225,8 +205,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
     public void getTopicList(ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
-        System.out.println("/topic/get  Topic List Fragment Render Data");
-
         for (String uid : topicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
 
@@ -286,15 +264,14 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         if (getActivity() == null)
                             return;
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if (topiList.size() == size) {
+                        if (topiList.size() == size) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                                     adapter.setList(topiList);
                                 }
-                            }
-                        });
+                            });
+                        }
 
 
                     } catch (JSONException e) {
@@ -327,8 +304,6 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Im resumed");
-
         getTopicUidList();
     }
 

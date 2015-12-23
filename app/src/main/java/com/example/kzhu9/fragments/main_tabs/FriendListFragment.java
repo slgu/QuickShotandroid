@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.FriendItemClickListener;
 import com.example.kzhu9.myapplication.FriendItemLongClickListener;
 import com.example.kzhu9.myapplication.FriendList;
 import com.example.kzhu9.myapplication.FriendListAdapter;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -91,7 +91,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     }
 
     public void getFriendUidList() {
-        System.out.println("Im done");
         String requestURL = Config.REQUESTURL + "/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -128,7 +127,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
-                    System.out.println("Friend List Fragment Get Data");
                     JSONObject info = responseObj.getJSONObject("info");
                     JSONArray friendsListObj = info.getJSONArray("friends_list");
 
@@ -174,7 +172,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     public void getFriendList(ArrayList<String> friendUidList) {
         final int size = friendUidList.size();
 
-        System.out.println("Friend List Fragment Render Data");
         for (String uid : friendUidList) {
             String requestURL = Config.REQUESTURL + "/user/get";
 
@@ -216,7 +213,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                         friendList = new JSONObject(responseStr);
                         info = friendList.getJSONObject("info");
-                        System.out.println(info);
 
                         friendEntity.setEmail(info.getString("email"));
                         friendEntity.setName(info.getString("name"));
@@ -256,6 +252,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
         intent.putExtra("EMAIL", friList.get(position).getEmail());
         intent.putExtra("ADDRESS", friList.get(position).getAddress());
         intent.putExtra("TOPIC_LISTS", friList.get(position).getTopics_list());
+        intent.putExtra("IMG_UID", friList.get(position).getImg_uid());
 
         startActivity(intent);
     }

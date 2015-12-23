@@ -57,7 +57,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
         int like = getIntent().getExtras().getInt("LIKE");
         String video = getIntent().getExtras().getString("VIDEO");
         String image = getIntent().getExtras().getString("IMAGE");
-//        ArrayList<String> com = getIntent().getExtras().getParcelableArrayList("COMMENTLIST");
         String commentList = getIntent().getExtras().getParcelableArrayList("COMMENTLIST").toString();
         String comments = commentList.substring(1, commentList.length() - 1);
 
@@ -82,14 +81,7 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
 
         mRecyclerView = (RecyclerView) findViewById(R.id.comment_list_view);
         mRecyclerView.setHasFixedSize(true);
-
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-//        commentsData = new ArrayList<CommentItem>();
-//        getCommentList();
-
-//        System.out.println("oncreate");
-//        System.out.println(commentsData.size());
 
         mAdapter = new CommentListAdapter(commentsData);
         mRecyclerView.setAdapter(mAdapter);
@@ -112,14 +104,14 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
 
 
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
-//
+
         Uri vidUri = Uri.parse(video);
         videoView.setVideoURI(vidUri);
 
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
-//        videoView.start();
+        videoView.start();
 
 
         btComment = (Button) findViewById(R.id.btComment);
@@ -129,7 +121,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
         ((TextView) findViewById(R.id.describe)).setText(description);
         ((TextView) findViewById(R.id.like)).setText(String.valueOf(like));
         ((TextView) findViewById(R.id.video)).setText(video);
-//        ((TextView) findViewById(R.id.commentContent)).setText(comments);
 
         final String topicId = getIntent().getExtras().getString("UID");
         btComment.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +128,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                 switch (v.getId()) {
                     case R.id.btComment:
                         String requestURL = Config.REQUESTURL + "/topic/comment";
-                        System.out.println(topicId);
 
                         RequestBody formBody = new FormEncodingBuilder()
                                 .add("tid", topicId)
@@ -169,7 +159,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                                     throw new IOException("Unexpected code " + response);
 
                                 String responseStr = response.body().string();
-//                                System.out.println(responseStr);
 
                                 Gson gson = new Gson();
                                 JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);
@@ -207,11 +196,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                                         }
                                     });
                                 }
-
-//                                Headers responseHeaders = response.headers();
-//                                for (int i = 0; i < responseHeaders.size(); i++) {
-//                                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                                }
                             }
                         });
                         break;
@@ -223,17 +207,12 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("TopicInfo is resumed");
-//        getCommentList();
-//        mAdapter.setList(commentsData);
     }
 
     public void dosomething() {
         swipeContainer.setRefreshing(true);
 
         getCommentList();
-        System.out.println("commentsData size");
-        System.out.println(commentsData.size());
 
         try {
             Thread.sleep(2000);
@@ -263,10 +242,8 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                 .post(formBody)
                 .build();
 
-        if (this == null) {
-            System.out.println("can't get activity");
+        if (this == null)
             return;
-        }
         commentsData.clear();
 
         OkHttpSingleton.getInstance().getClient(this.getBaseContext()).newCall(request).enqueue(new Callback() {
@@ -291,24 +268,10 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                 String responseStr = response.body().string();
 
                 try {
-                    TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
-
                     JSONObject responseObj = new JSONObject(responseStr);
-
                     JSONObject info = responseObj.getJSONObject("info");
-
-//                    System.out.println("print comment_list");
                     JSONArray array = info.getJSONArray("comment_list");
-//                    System.out.println(commentStr);
-//                    ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
-//                    System.out.println(commentList.toString());
-//                    topicEntity.setComments_list(commentList);
-
-//                    String comments = commentStr.substring(1, commentStr.length() - 1);
-
-//                    JSONObject temp;
                     try {
-
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject com = array.getJSONObject(i);
                             CommentItem comItem = new CommentItem();
@@ -316,19 +279,13 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                             comItem.setText(com.getString("text"));
                             comItem.setTime(com.getString("time"));
                             commentsData.add(comItem);
-                            System.out.println(com.getString("name") +" "+com.getString("text")+ " "+com.getString("time"));
                         }
-
-//                        mAdapter.setList(commentsData);
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    if (this == null) {
-                        System.out.println("can't get activity");
-                        return;
-                    }
+//                    if (this == null)
+//                        return;
 
 //                    runOnUiThread(new Runnable() {
 //                        @Override
@@ -347,7 +304,6 @@ public class TopicInfo extends AppCompatActivity implements SwipeRefreshLayout.O
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }

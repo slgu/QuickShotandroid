@@ -150,7 +150,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
-                    System.out.println("Topic List Fragment Get Data");
                     JSONObject info = responseObj.getJSONObject("info");
                     JSONArray topicsList = info.getJSONArray("topics_list");
 
@@ -170,14 +169,8 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
 
     public void getTopicList(ArrayList<String> topicUidList) {
-
         final int size = topicUidList.size();
-        System.out.println("getTopicList called");
         topiList.clear();
-        System.out.println("topiList " + topiList.size());
-        System.out.println("topicUidList "+size);
-        System.out.println("Topic List Fragment Render Data");
-
         for (String uid : topicUidList) {
             String requestURL = Config.REQUESTURL + "/topic/get";
 
@@ -189,10 +182,8 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     .post(formBody)
                     .build();
 
-            if (getActivity() == null) {
-                System.out.println("can't get activity");
+            if (getActivity() == null)
                 return;
-            }
 
             OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
 
@@ -222,7 +213,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         JSONObject responseObj = new JSONObject(responseStr);
 
                         JSONObject info = responseObj.getJSONObject("info");
-                        System.out.println(info);
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -238,12 +228,9 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
                         topiList.add(topicEntity);
 
-                        if (getActivity() == null) {
-                            System.out.println("can't get activity");
+                        if (getActivity() == null)
                             return;
-                        }
 
-                        System.out.println(topiList.size());
                         if (size == topiList.size()) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -284,8 +271,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Im resumed");
-
         getTopicUidList();
     }
 

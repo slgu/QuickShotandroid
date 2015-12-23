@@ -9,61 +9,52 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 /**
-* Created by jinliang on 12/20/15.
-*/
+ * Created by jinliang on 12/20/15.
+ */
 public class CommentListAdapter extends RecyclerView.Adapter<CommentListViewHolder> {
 
-   private ArrayList<CommentItem> list;
+    private ArrayList<CommentItem> list;
 
-   public CommentListAdapter(ArrayList<CommentItem> data) {
-       list = data;
-   }
+    public CommentListAdapter(ArrayList<CommentItem> data) {
+        list = data;
+    }
 
-   public CommentListAdapter(Context context) {
-       list = new ArrayList<>();
-   }
+    public CommentListAdapter(Context context) {
+        list = new ArrayList<>();
+    }
+
     public CommentListAdapter() {
 
     }
 
-   //
-   public void setList(ArrayList<CommentItem> data) {
-//        list = data;
-       list.clear();
-       System.out.println("data size");
-       System.out.println(data.size());
-       System.out.println("list is cleared");
-       for (int i = 0; i < data.size(); ++i) {
-           System.out.println("fuck");
-           list.add(data.get(i));
-       }
-//       list.addAll(data);
-       System.out.println("list size");
-       System.out.println(list.size());
-//        notifyItemChanged(0, list.size());
-       notifyDataSetChanged();
-   }
+    public void setList(ArrayList<CommentItem> data) {
+        list.clear();
+        for (int i = 0; i < data.size(); ++i) {
+            list.add(data.get(i));
+        }
+        notifyDataSetChanged();
+    }
 
-   @Override
-   public CommentListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public CommentListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_comment_list_item, parent, false);
-       CommentListViewHolder holder = new CommentListViewHolder(view);
-       return holder;
-   }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_comment_list_item, parent, false);
+        CommentListViewHolder holder = new CommentListViewHolder(view);
+        return holder;
+    }
 
-   @Override
-   public void onBindViewHolder(CommentListViewHolder holder, int position) {
-       CommentItem comment = list.get(position);
+    @Override
+    public void onBindViewHolder(CommentListViewHolder holder, int position) {
+        CommentItem comment = list.get(position);
 
-       holder.nameText.setText(comment.getName());
-       holder.timeText.setText(comment.getTime());
-       holder.commentText.setText(comment.getText());
-   }
+        holder.nameText.setText(comment.getName());
+        holder.timeText.setText(comment.getTime());
+        holder.commentText.setText(comment.getText());
+    }
 
-   @Override
-   public int getItemCount() {
-       return list.size();
-   }
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
 
 }

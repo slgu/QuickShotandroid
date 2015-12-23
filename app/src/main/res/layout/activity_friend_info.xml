@@ -8,129 +8,39 @@
     tools:context=".FriendInfo">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
-        android:background="@drawable/lightgray">
-
-        <RelativeLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/infoContainer"
-            android:layout_marginTop="60dp"
-            android:layout_marginBottom="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:gravity="center"
-            android:background="@drawable/pureWhite">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name:"
-                android:id="@+id/tvName"
-                android:typeface="serif"
-                android:textSize="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginBottom="20dp"
-                />
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/tvName"
-                android:text="Name Name"
-                android:textSize="18sp"
-                android:textColor="@drawable/black"
-                />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/PopupOverlay" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Age:"
-                android:id="@+id/tvAge"
-                android:typeface="serif"
-                android:textSize="20dp"
-                android:layout_marginRight="48dp"
-                android:layout_below="@id/tvName"
-                android:layout_marginBottom="20dp"
-                />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
 
-            <TextView
-                android:id="@+id/age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="18 year-old"
-                android:layout_below="@id/tvName"
-                android:layout_toRightOf="@+id/tvAge"
-                android:textSize="18sp"
-                android:textColor="@drawable/black"
+    <include layout="@layout/content_scrolling" />
 
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email:"
-                android:id="@+id/tvEmail"
-                android:typeface="serif"
-                android:textSize="20dp"
-                android:layout_marginRight="29dp"
-                android:layout_below="@id/tvAge"
-                android:layout_marginBottom="20dp"
-                />
-
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="whitehouse@gmail.com"
-                android:layout_below="@id/tvAge"
-                android:layout_toRightOf="@+id/tvEmail"
-                android:textSize="18sp"
-                android:textColor="@drawable/black"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address:"
-                android:id="@+id/tvAddress"
-                android:typeface="serif"
-                android:textSize="20dp"
-                android:layout_marginRight="8dp"
-                android:layout_below="@id/tvEmail"
-                />
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Columbia Univ."
-                android:layout_below="@id/tvEmail"
-                android:layout_toRightOf="@+id/tvAddress"
-                android:textSize="18sp"
-                android:textColor="@drawable/black"
-                />
-        </RelativeLayout>
-
-    </LinearLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_dialog_email"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end" />
 
 </android.support.design.widget.CoordinatorLayout>

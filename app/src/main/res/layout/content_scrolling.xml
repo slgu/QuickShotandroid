@@ -5,13 +5,140 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.kzhu9.myapplication.ScrollingActivity"
-    tools:showIn="@layout/activity_scrolling">
+    tools:context=".FriendInfo"
+    tools:showIn="@layout/activity_friend_info">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:background="@drawable/lightgray">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/infoContainer"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:background="@drawable/pureWhite">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:id="@+id/tvName"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvName"
+                android:text="Name Name"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age:"
+                android:id="@+id/tvAge"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="48dp"
+                android:layout_below="@id/tvName"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18 year-old"
+                android:layout_below="@id/tvName"
+                android:layout_toRightOf="@+id/tvAge"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email:"
+                android:id="@+id/tvEmail"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="29dp"
+                android:layout_below="@id/tvAge"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="whitehouse@gmail.com"
+                android:layout_below="@id/tvAge"
+                android:layout_toRightOf="@+id/tvEmail"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address:"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@id/tvEmail"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Columbia Univ."
+                android:layout_below="@id/tvEmail"
+                android:layout_toRightOf="@+id/tvAddress"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:id="@+id/tvTopicLists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Topics:"
+                android:typeface="serif"
+                android:textSize="20dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@id/tvAddress"
+                />
+
+            <ListView
+                android:id="@+id/topicLists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Columbia Univ."
+                android:layout_below="@id/address"
+                android:layout_toRightOf="@+id/tvTopicLists"
+                android:textSize="18sp"
+                android:textColor="@drawable/black"
+                />
+        </RelativeLayout>
+
+    </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

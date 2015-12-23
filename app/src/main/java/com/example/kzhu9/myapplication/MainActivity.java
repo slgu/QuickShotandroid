@@ -31,7 +31,6 @@ import com.example.kzhu9.fragments.sidebar.SearchUsersFragment;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         View header = navigationView.getHeaderView(0);
 
@@ -98,15 +96,12 @@ public class MainActivity extends AppCompatActivity
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -137,13 +132,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
-
-        // personal profile ??????????????????
         findViewById(R.id.profile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ScrollingActivity.class);
+                Intent intent = new Intent(view.getContext(), FriendInfo.class);
+                intent.putExtra("NAME", SelfInfo.name);
+                intent.putExtra("SEX", SelfInfo.sex);
+                intent.putExtra("AGE", SelfInfo.age);
+                intent.putExtra("EMAIL", SelfInfo.email);
+                intent.putExtra("ADDRESS", SelfInfo.address);
+                intent.putExtra("TOPIC_LISTS", SelfInfo.topics_list);
+                intent.putExtra("IMG_UID", SelfInfo.img_uid);
+
                 startActivity(intent);
             }
         });
@@ -160,17 +160,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-
         FragmentManager fm = getSupportFragmentManager();
 
         int id = item.getItemId();
@@ -217,11 +212,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    SelfInfo.clear();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // return to login
-                            Toast.makeText(getApplicationContext(), "Server is down!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Server is down, Relogin Please!", Toast.LENGTH_LONG).show();
                         }
                     });
                     throw new IOException("Unexpected code " + response);
@@ -230,11 +228,10 @@ public class MainActivity extends AppCompatActivity
                 String responseStr = response.body().string();
                 try {
                     JSONObject jsonObject = new JSONObject(responseStr);
-                    //change it here
-
                     switch (jsonObject.getInt("status")) {
                         case 0:
                             SelfInfo.clear();
+
                             startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
                             finish();
@@ -248,11 +245,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
-
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
             }
         });

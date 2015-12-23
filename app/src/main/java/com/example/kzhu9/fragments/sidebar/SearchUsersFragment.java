@@ -26,16 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
-import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.FriendItems;
 import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.FriendInfo;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -133,7 +132,6 @@ public class SearchUsersFragment extends Fragment {
                         }
 
                         String responseStr = response.body().string();
-                        System.out.println(responseStr);
                         try {
                             friendList = new JSONArray(responseStr);
                             FriendItems tempFriend;
@@ -162,8 +160,6 @@ public class SearchUsersFragment extends Fragment {
                                     pd.dismiss();
                                     searchResults.setAdapter(new SearchResultsAdapter(getActivity(), friendResults));
                                     search.clearFocus();
-
-
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -184,10 +180,6 @@ public class SearchUsersFragment extends Fragment {
                         }
 
                         pd.dismiss();
-                        Headers responseHeaders = response.headers();
-                        for (int i = 0; i < responseHeaders.size(); i++) {
-                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                        }
                     }
                 });
 
@@ -207,14 +199,12 @@ public class SearchUsersFragment extends Fragment {
                 new MenuItemCompat.OnActionExpandListener() {
                     @Override
                     public boolean onMenuItemActionCollapse(MenuItem item) {
-                        System.out.println("search item is closed");
                         setItemsVisibility(menu, searchItem, true);
                         return true;  // Return true to collapse action view
                     }
 
                     @Override
                     public boolean onMenuItemActionExpand(MenuItem item) {
-                        System.out.println("search item is clicked");
                         setItemsVisibility(menu, searchItem, false);
                         return true;  // Return true to expand action view
                     }
@@ -276,7 +266,6 @@ public class SearchUsersFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
             final FriendItems tempFriend = friendDetails.get(position);
-            //System.out.println(tempFriend.toString());
 
             if (convertView == null) {
                 convertView = layoutInflater.inflate(R.layout.searchfriendresult, null);
@@ -329,7 +318,6 @@ public class SearchUsersFragment extends Fragment {
                                 throw new IOException("Unexpected code " + response);
 
                             String responseStr = response.body().string();
-                            System.out.println(responseStr);
 
                             Gson gson = new Gson();
                             JsonObject responseJsonObject = gson.fromJson(responseStr, JsonObject.class);

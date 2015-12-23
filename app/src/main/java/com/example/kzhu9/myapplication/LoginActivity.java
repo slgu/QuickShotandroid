@@ -13,7 +13,6 @@ import com.example.kzhu9.config.Config;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -42,20 +41,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         tvregisterLink.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bLogin:
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                String requestURL = Config.REQUESTURL  + "/user/login";
-
-//                System.out.println(username.toString());
-//
-//                if (password.equals(null) || username.equals(null)) {
-//                    Toast.makeText(getApplicationContext(), "Please input username/password", Toast.LENGTH_LONG).show();
-//                }
+                String requestURL = Config.REQUESTURL + "/user/login";
 
                 RequestBody formBody = new FormEncodingBuilder()
                         .add("username", username)
@@ -86,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                         String responseStr = response.body().string();
-                        System.out.println(responseStr);
                         try {
                             JSONObject jsonObject = new JSONObject(responseStr);
                             //change it here
@@ -131,17 +122,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-                        Headers responseHeaders = response.headers();
-                        for (int i = 0; i < responseHeaders.size(); i++) {
-                            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                        }
                     }
                 });
                 break;
             case R.id.tvRegisterLink:
                 startActivity(new Intent(this, RegisterActivity.class));
-
                 break;
         }
     }
@@ -176,7 +161,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     throw new IOException("Unexpected code " + response);
 
                 String responseStr = response.body().string();
-                System.out.println(responseStr);
 
                 JSONObject friendList;
                 JSONObject info;
@@ -193,7 +177,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     SelfInfo.topics_list = info.getString("topics_list");
                     SelfInfo.img_uid = info.getString("img_uid");
                     SelfInfo.name = info.getString("name");
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
