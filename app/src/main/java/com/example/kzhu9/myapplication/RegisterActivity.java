@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,7 +34,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
@@ -45,11 +44,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     ImageView picturePreview;
     static boolean validRegistration = false;
 
-
-    Bitmap bmThumbnail;
-    ImageView videoThumbnail;
+    Bitmap bitmap;
     String path;
-    File video;
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
@@ -104,18 +100,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         bPicture = (Button) findViewById(R.id.bPicture);
         picturePreview = (ImageView) findViewById(R.id.picturePreview);
+        bPicture.setOnClickListener(this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == -1 && data != null) {
-            Uri selectedVideo = data.getData();
-            path = getRealPathFromURI(getApplicationContext(), selectedVideo);
-            video = new File(path);
+            Uri selectedImage = data.getData();
+            path = getRealPathFromURI(getApplicationContext(), selectedImage);
+            System.out.println(path.toString());
 
-            bmThumbnail = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.MINI_KIND);
-            videoThumbnail.setImageBitmap(bmThumbnail);
+            bitmap = BitmapFactory.decodeFile(path);
+            picturePreview.setImageBitmap(bitmap);
         }
     }
 
@@ -148,10 +145,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     String requestURL = Config.REQUESTURL + "/user/register";
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bmThumbnail.compress(Bitmap.CompressFormat.PNG, 30, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 30, stream);
                     byte[] byteArray = stream.toByteArray();
 
-                    RequestBody formBody = new MultipartBuilder()
+                    System.out.println(username + password + name + email + age + sex + address + emailVerficatinCode);
+
+                    RequestBody requestBody = new MultipartBuilder()
                             .type(MultipartBuilder.FORM)
                             .addFormDataPart("username", username)
                             .addFormDataPart("passwd", password)
@@ -162,12 +161,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             .addFormDataPart("address", address)
                             .addFormDataPart("verifycode", emailVerficatinCode)
                             .addPart(
-                                    Headers.of("Content-Disposition", "form-data; name=\"image\""),
+                                    Headers.of("Content-Disposition", "form-data; name=\"img\""),
                                     RequestBody.create(MEDIA_TYPE_PNG, byteArray))
                             .build();
                     Request request = new Request.Builder()
                             .url(requestURL)
-                            .post(formBody)
+                            .post(requestBody)
                             .build();
 
                     OkHttpSingleton.getInstance().getClient(context).newCall(request).enqueue(new Callback() {
@@ -194,6 +193,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             int status = Integer.parseInt(responseJsonObject.get("status").toString());
                             if (status == 0) {
                                 System.out.println("Jump to the Login page");
+                                SelfInfo.clear();
+
+                                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+
+                                finish();
                                 //startActivity(new Intent(RegisterActivity.class, RegisterActivity.class));
                             }
                             String errInfo = null;
@@ -233,6 +237,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.bPicture:
+                System.out.println("select picture is clicked");
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
 
                 break;
             case R.id.bEmailVerificationCode:
@@ -244,7 +251,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public static void postEmail(String str, Context context) {
-
         String requestURL = Config.REQUESTURL + "/user/verify";
         final String email = str;
 
