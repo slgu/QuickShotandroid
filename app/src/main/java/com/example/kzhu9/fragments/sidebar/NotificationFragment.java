@@ -298,8 +298,10 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                                     @Override
                                     public void run() {
                                         Toast.makeText(getActivity(), tmp, Toast.LENGTH_LONG).show();
+                                        System.out.println("fuck");
                                     }
                                 });
+                                getNotifications();
                             }
                         }
                     });
