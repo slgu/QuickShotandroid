@@ -135,47 +135,46 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                 }
 
                 String responseStr = response.body().string();
-
-                if (!topiList.isEmpty())
+                //syncronized to protect topilist
+                synchronized (topiList) {
                     topiList.clear();
-                try {
-                    JSONObject responseObj = new JSONObject(responseStr);
-                    final JSONArray json_topic_list = responseObj.getJSONArray("info");
-                    if (!topiList.isEmpty())
+                    try {
+                        JSONObject responseObj = new JSONObject(responseStr);
+                        final JSONArray json_topic_list = responseObj.getJSONArray("info");
                         topiList.clear();
-                    for (int i = 0; i < json_topic_list.length(); i++) {
-                        JSONObject obj = json_topic_list.getJSONObject(i);
-                        try {
-                            TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
-                            topicEntity.setUid(obj.getString("uid"));
-                            topicEntity.setTitle(obj.getString("title"));
-                            topicEntity.setDescription(obj.getString("desc"));
-                            topicEntity.setVideo_uid(obj.getString("video_uid"));
-                            topicEntity.setLat(obj.getString("lat"));
-                            topicEntity.setLon(obj.getString("lon"));
-                            topicEntity.setLike(obj.getInt("like"));
-                            topicEntity.setImage_uid(obj.getString("img_uid"));
-                            String commentStr = obj.getString("comment_list");
-                            ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
-                            topicEntity.setComments_list(commentList);
-                            topiList.add(topicEntity);
-                            if (getActivity() == null)
-                                return;
+                        for (int i = 0; i < json_topic_list.length(); i++) {
+                            JSONObject obj = json_topic_list.getJSONObject(i);
+                            try {
+                                TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+                                topicEntity.setUid(obj.getString("uid"));
+                                topicEntity.setTitle(obj.getString("title"));
+                                topicEntity.setDescription(obj.getString("desc"));
+                                topicEntity.setVideo_uid(obj.getString("video_uid"));
+                                topicEntity.setLat(obj.getString("lat"));
+                                topicEntity.setLon(obj.getString("lon"));
+                                topicEntity.setLike(obj.getInt("like"));
+                                topicEntity.setImage_uid(obj.getString("img_uid"));
+                                String commentStr = obj.getString("comment_list");
+                                ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                                topicEntity.setComments_list(commentList);
+                                topiList.add(topicEntity);
+                                if (getActivity() == null)
+                                    return;
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.setList(topiList);
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setList(topiList);
-                        }
-                    });
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         });

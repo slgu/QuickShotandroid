@@ -169,10 +169,9 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     }
 
 
-    public void getTopicList(final ArrayList<String> topicUidList) {
+    public synchronized void getTopicList(final ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
         topiList.clear();
-
         for (String uid : topicUidList) {
             System.out.println(uid);
             String requestURL = Config.REQUESTURL + "/topic/get";
@@ -209,46 +208,46 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     String responseStr = response.body().string();
                     System.out.println(responseStr);
 
-                    try {
-                        TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
+                        try {
+                            TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
-                        JSONObject responseObj = new JSONObject(responseStr);
+                            JSONObject responseObj = new JSONObject(responseStr);
 
-                        JSONObject info = responseObj.getJSONObject("info");
-                        Date createAt = new Date(info.getString("createAt"));
+                            JSONObject info = responseObj.getJSONObject("info");
+                            Date createAt = new Date(info.getString("createAt"));
 
-                        topicEntity.setUid(info.getString("uid"));
-                        topicEntity.setTitle(info.getString("title"));
-                        topicEntity.setDescription(info.getString("desc"));
-                        topicEntity.setVideo_uid(info.getString("video_uid"));
-                        topicEntity.setImage_uid(info.getString("img_uid"));
-                        topicEntity.setLat(info.getString("lat"));
-                        topicEntity.setLon(info.getString("lon"));
-                        topicEntity.setLike(info.getInt("like"));
-                        topicEntity.setCreateAt(createAt);
-                        String commentStr = info.getString("comment_list");
-                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
-                        topicEntity.setComments_list(commentList);
-                        topiList.add(topicEntity);
+                            topicEntity.setUid(info.getString("uid"));
+                            topicEntity.setTitle(info.getString("title"));
+                            topicEntity.setDescription(info.getString("desc"));
+                            topicEntity.setVideo_uid(info.getString("video_uid"));
+                            topicEntity.setImage_uid(info.getString("img_uid"));
+                            topicEntity.setLat(info.getString("lat"));
+                            topicEntity.setLon(info.getString("lon"));
+                            topicEntity.setLike(info.getInt("like"));
+                            topicEntity.setCreateAt(createAt);
+                            String commentStr = info.getString("comment_list");
+                            ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                            topicEntity.setComments_list(commentList);
+                            topiList.add(topicEntity);
 
-                        if (getActivity() == null)
-                            return;
+                            if (getActivity() == null)
+                                return;
 
-                        if (size == topiList.size()) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //sort according to timestamp
-                                    Collections.sort(topiList);
-                                    adapter.setList(topiList);
-                                }
-                            });
+                            if (size == topiList.size()) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //sort according to timestamp
+                                        Collections.sort(topiList);
+                                        adapter.setList(topiList);
+                                    }
+                                });
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
             });
         }
     }
