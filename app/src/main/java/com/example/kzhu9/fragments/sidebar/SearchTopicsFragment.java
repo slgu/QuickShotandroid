@@ -463,7 +463,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_searchtopics, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("Search Topics");
+        ((MainActivity) getActivity()).setActionBarTitle("Search Shots");
         return rootview;
     }
 

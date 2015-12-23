@@ -49,9 +49,14 @@ public class FriendInfo extends AppCompatActivity {
         String topic_lists = getIntent().getExtras().getString("TOPIC_LISTS");
         String img_uid = getIntent().getExtras().getString("IMG_UID");
 
-        String [] arr = new Gson().fromJson(topic_lists, String[].class);
-
-        List <String> topicUidList = java.util.Arrays.asList(arr);
+        List <String> topicUidList = null;
+        if (topic_lists == null) {
+            topicUidList = new ArrayList<>();
+        }
+        else {
+            String[] arr = new Gson().fromJson(topic_lists, String[].class);
+            topicUidList = java.util.Arrays.asList(arr);
+        }
         System.out.println("debuglist:" + topicUidList);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

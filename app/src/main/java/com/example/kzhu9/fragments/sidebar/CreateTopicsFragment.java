@@ -277,7 +277,7 @@ public class CreateTopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_createtopics, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("Create Topics");
+        ((MainActivity) getActivity()).setActionBarTitle("Create Shots");
         return rootview;
     }
 
