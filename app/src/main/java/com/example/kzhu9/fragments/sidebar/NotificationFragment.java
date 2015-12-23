@@ -1,6 +1,7 @@
 package com.example.kzhu9.fragments.sidebar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,9 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.LoginActivity;
 import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.NotificationItems;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.SelfInfo;
 import com.example.kzhu9.myapplication.okhttp_singleton.OkHttpSingleton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -278,6 +281,11 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                                     resultStr = "Successfully accept " + " as friend!";
                                     break;
                                 case 1:
+                                    resultStr = "Server restarted! Need to login again!";
+                                    SelfInfo.clear();
+                                    startActivity(new Intent(getActivity(), LoginActivity.class));
+
+                                    getActivity().finish();
                                     // go back to login activity ???????????????
                                     break;
                                 case 4:

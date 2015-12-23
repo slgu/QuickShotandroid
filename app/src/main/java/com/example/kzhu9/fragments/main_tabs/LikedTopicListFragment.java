@@ -60,18 +60,18 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
         recyclerView = (RecyclerView) view.findViewById(R.id.topicList);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_topic);
-        try {
-            Thread.sleep(500);
-            swipeContainer.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeContainer.setRefreshing(true);
-                    dosomething();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(500);
+//            swipeContainer.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    swipeContainer.setRefreshing(true);
+//                    dosomething();
+//                }
+//            });
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return view;
     }
 
