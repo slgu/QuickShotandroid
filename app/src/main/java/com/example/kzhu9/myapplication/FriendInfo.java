@@ -95,8 +95,8 @@ public class FriendInfo extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
                 i.putExtra(Intent.EXTRA_EMAIL, new String[]{getIntent().getExtras().getString("EMAIL")});
-                i.putExtra(Intent.EXTRA_SUBJECT, SelfInfo.name +" wants to add you as friend!");
-                i.putExtra(Intent.EXTRA_TEXT, "body of email");
+                i.putExtra(Intent.EXTRA_SUBJECT, SelfInfo.name + "' chat email from QuickShot");
+                i.putExtra(Intent.EXTRA_TEXT, "Dear ...");
                 try {
                     startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {
