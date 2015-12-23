@@ -135,25 +135,24 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
         });
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_notifications, container, false);
         swipeContainer = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeContainer_notification);
         ((MainActivity) getActivity()).setActionBarTitle("Notifications");
-        try {
-            Thread.sleep(500);
-            swipeContainer.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeContainer.setRefreshing(true);
-                    dosomething();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(500);
+//            swipeContainer.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    swipeContainer.setRefreshing(true);
+//                    dosomething();
+//                }
+//            });
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return rootview;
     }
 

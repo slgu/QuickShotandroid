@@ -1,12 +1,22 @@
 package com.example.kzhu9.myapplication;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -17,23 +27,66 @@ import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button bRegister, bEmailVerificationCode;
+    Button bRegister, bEmailVerificationCode, bPicture;
     EditText etUsername, etPassword, etName, etEmail, etAge, etAddress, etEmailVerificationCode;
     Spinner etStrSex;
+    ImageView picturePreview;
     static boolean validRegistration = false;
+
+
+    Bitmap bmThumbnail;
+    ImageView videoThumbnail;
+    String path;
+    File video;
+
+    private static final int RESULT_LOAD_IMAGE = 1;
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(contentUri, proj,
+                null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        verifyStoragePermissions(this);
 
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -48,13 +101,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         bEmailVerificationCode = (Button) findViewById(R.id.bEmailVerificationCode);
         bRegister.setOnClickListener(this);
         bEmailVerificationCode.setOnClickListener(this);
+
+        bPicture = (Button) findViewById(R.id.bPicture);
+        picturePreview = (ImageView) findViewById(R.id.picturePreview);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == -1 && data != null) {
+            Uri selectedVideo = data.getData();
+            path = getRealPathFromURI(getApplicationContext(), selectedVideo);
+            video = new File(path);
+
+            bmThumbnail = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.MINI_KIND);
+            videoThumbnail.setImageBitmap(bmThumbnail);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bRegister:
-
                 String name = etName.getText().toString();
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
@@ -67,34 +135,35 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 String age = etAge.getText().toString();
                 String emailVerficatinCode = etEmailVerificationCode.getText().toString();
 
-                System.out.println(username);
-                System.out.println(password);
-                System.out.println(name);
-                System.out.println(address);
-                System.out.println(email);
-                System.out.println(emailVerficatinCode);
-                System.out.println(age);
                 if (name.isEmpty() || username.isEmpty() || password.isEmpty() || address.isEmpty() || email.isEmpty() || age.isEmpty() || emailVerficatinCode.isEmpty()) {
                     validRegistration = false;
                 } else {
                     validRegistration = true;
                 }
 
-                if (validRegistration == true) {
+                if (validRegistration) {
                     //Jump to the Login page
                     User user = new User(username, password, name, email, emailVerficatinCode, address, age, sex);
                     Context context = getApplicationContext();
-                    String requestURL = Config.REQUESTURL+"/user/register";
+                    String requestURL = Config.REQUESTURL + "/user/register";
 
-                    RequestBody formBody = new FormEncodingBuilder()
-                            .add("username", username)
-                            .add("passwd", password)
-                            .add("name", name)
-                            .add("email", email)
-                            .add("age", age)
-                            .add("sex", sex)
-                            .add("address", address)
-                            .add("verifycode", emailVerficatinCode)
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bmThumbnail.compress(Bitmap.CompressFormat.PNG, 30, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                    RequestBody formBody = new MultipartBuilder()
+                            .type(MultipartBuilder.FORM)
+                            .addFormDataPart("username", username)
+                            .addFormDataPart("passwd", password)
+                            .addFormDataPart("name", name)
+                            .addFormDataPart("email", email)
+                            .addFormDataPart("age", age)
+                            .addFormDataPart("sex", sex)
+                            .addFormDataPart("address", address)
+                            .addFormDataPart("verifycode", emailVerficatinCode)
+                            .addPart(
+                                    Headers.of("Content-Disposition", "form-data; name=\"image\""),
+                                    RequestBody.create(MEDIA_TYPE_PNG, byteArray))
                             .build();
                     Request request = new Request.Builder()
                             .url(requestURL)
@@ -163,6 +232,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 break;
+            case R.id.bPicture:
+
+                break;
             case R.id.bEmailVerificationCode:
                 String emailForVerify = etEmail.getText().toString();
 
@@ -173,7 +245,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public static void postEmail(String str, Context context) {
 
-        String requestURL = Config.REQUESTURL+"/user/verify";
+        String requestURL = Config.REQUESTURL + "/user/verify";
         final String email = str;
 
 
