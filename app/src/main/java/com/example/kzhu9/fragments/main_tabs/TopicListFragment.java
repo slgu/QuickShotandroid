@@ -35,6 +35,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -102,7 +104,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 Toast.makeText(getActivity(), "My Topics Refreshed!", Toast.LENGTH_LONG).show();
             }
         });
@@ -152,11 +153,11 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                     JSONObject responseObj = new JSONObject(responseStr);
                     JSONObject info = responseObj.getJSONObject("info");
                     JSONArray topicsList = info.getJSONArray("topics_list");
-
                     ArrayList<String> uidList = new ArrayList<>();
 
                     for (int i = 0; i < topicsList.length(); i++) {
                         uidList.add(topicsList.getString(i));
+
                     }
                     getTopicList(uidList);
 
@@ -168,10 +169,12 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
     }
 
 
-    public void getTopicList(ArrayList<String> topicUidList) {
+    public void getTopicList(final ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
         topiList.clear();
+
         for (String uid : topicUidList) {
+            System.out.println(uid);
             String requestURL = Config.REQUESTURL + "/topic/get";
 
             RequestBody formBody = new FormEncodingBuilder()
@@ -184,7 +187,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
 
             if (getActivity() == null)
                 return;
-
             OkHttpSingleton.getInstance().getClient(getActivity().getBaseContext()).newCall(request).enqueue(new Callback() {
 
                 @Override
@@ -205,14 +207,17 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+                    System.out.println(responseStr);
 
                     try {
-
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
                         JSONObject responseObj = new JSONObject(responseStr);
 
                         JSONObject info = responseObj.getJSONObject("info");
+                        Date date = new Date(info.getString("createAt"));
+                        System.out.println(date.toString());
+                        System.out.println("createAt " + info.getString("createAt"));
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -225,7 +230,6 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         String commentStr = info.getString("comment_list");
                         ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
                         topicEntity.setComments_list(commentList);
-
                         topiList.add(topicEntity);
 
                         if (getActivity() == null)
@@ -235,7 +239,8 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //TODO Collections.sort(topiList);
+                                    //sort according to timestamp
+                                    Collections.sort(topiList);
                                     adapter.setList(topiList);
                                 }
                             });

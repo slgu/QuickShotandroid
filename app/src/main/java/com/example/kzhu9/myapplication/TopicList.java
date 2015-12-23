@@ -1,6 +1,7 @@
 package com.example.kzhu9.myapplication;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -36,11 +37,12 @@ public class TopicList{
         private String image_uid;
         private String video_uid;
         private ArrayList<String> comments_list;
+        private Date createAt;
 
         @Override
         public int compareTo(TopicEntity topicEntity) {
             //write code here for compare name
-            return topicEntity.description.compareTo(this.description);
+            return  createAt.compareTo(topicEntity.createAt);
         }
 
         public String getUid() {
