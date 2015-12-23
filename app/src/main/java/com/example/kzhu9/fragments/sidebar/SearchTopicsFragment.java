@@ -78,7 +78,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     ArrayList<TopicItems> topicResults = new ArrayList<>();
 
     //map for multi request
-    ConcurrentHashMap <String, TopicList.TopicEntity> mp = new ConcurrentHashMap<String, TopicList.TopicEntity>();
+    ConcurrentHashMap<String, TopicList.TopicEntity> mp = new ConcurrentHashMap<String, TopicList.TopicEntity>();
     private static final int REQUEST_EXTERNAL_LOCATION = 1;
     private static String[] PERMISSIONS_LOCATION = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -124,7 +124,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                 ArrayList<TopicItems> arrayList = new ArrayList<TopicItems>();
 
-                for (TopicList.TopicEntity topicEntity: topiList) {
+                for (TopicList.TopicEntity topicEntity : topiList) {
                     TopicItems topicItems = new TopicItems();
                     topicItems.setUid(topicEntity.getUid());
                     topicItems.setLatitude(topicEntity.getLat());
@@ -303,7 +303,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
 
     private void setItemsVisibility(Menu menu, MenuItem exception, boolean visible) {
-        for (int i=0; i<menu.size(); ++i) {
+        for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
             if (item != exception) item.setVisible(visible);
         }
@@ -337,7 +337,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
-                System.out.println("latitude " + latitude + "+ longitude "+ longitude);
+                System.out.println("latitude " + latitude + "+ longitude " + longitude);
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL + "/topic/find";
@@ -403,7 +403,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 tempTopic.setTitle(obj.getString("title"));
                                 tempTopic.setDescription(obj.getString("desc"));
 
-                                System.out.println("uid " +obj.getString("uid")+ " title "+obj.getString("title"));
+                                System.out.println("uid " + obj.getString("uid") + " title " + obj.getString("title"));
 
                                 uidList.add(obj.getString("uid"));
 
@@ -451,7 +451,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         pd.dismiss();
                     }
                 });
-
 
 
                 return true;
@@ -561,18 +560,16 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         //request all done
                         if (mp.size() == topicUidList.size()) {
                             //add to topic list
-                            for (String key: mp.keySet()) {
+                            for (String key : mp.keySet()) {
                                 System.out.println(key);
                             }
-                            for (String uid: topicUidList) {
+                            for (String uid : topicUidList) {
                                 System.out.println(uid);
                                 if (mp.containsKey(uid)) {
                                     topiList.add(mp.get(uid));
-                                }
-                                else if (mp.containsKey("-" + uid)) {
+                                } else if (mp.containsKey("-" + uid)) {
                                     topiList.add(mp.get("-" + uid));
-                                }
-                                else {
+                                } else {
                                     System.out.println("superfuck");
                                 }
                             }
@@ -695,6 +692,10 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 case 1:
                                     resultStr = "Server restarted! Need to login again!";
                                     // terminate the app and relogin
+                                    SelfInfo.clear();
+                                    startActivity(new Intent(getActivity(), LoginActivity.class));
+
+                                    getActivity().finish();
                                     break;
                             }
                             if (resultStr != null) {

@@ -21,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.LoginActivity;
 import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.SelfInfo;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.TopicList;
@@ -376,7 +378,11 @@ public class RecommendationFragment extends Fragment implements SwipeRefreshLayo
                                     break;
                                 case 1:
                                     resultStr = "Server restarted! Need to login again!";
-                                    // terminate the app and relogin
+
+                                    SelfInfo.clear();
+                                    startActivity(new Intent(getActivity(), LoginActivity.class));
+
+                                    getActivity().finish();
                                     break;
                             }
                             if (resultStr != null) {

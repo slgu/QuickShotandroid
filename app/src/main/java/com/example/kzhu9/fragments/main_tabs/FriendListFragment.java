@@ -124,8 +124,6 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
                 String responseStr = response.body().string();
 
-
-
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
                     int status = Integer.parseInt(responseObj.get("status").toString());
