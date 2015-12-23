@@ -11,8 +11,8 @@
 
     <string name="main_page">Main</string>
     <string name="search_friends">Search Friends</string>
-    <string name="search_topics">Search Topics</string>
-    <string name="create_topics">Create Topics</string>
+    <string name="search_topics">Search Shots</string>
+    <string name="create_topics">Create Shots</string>
     <string name="notifications">Notifications</string>
     <string name="recommendations">Recommendations</string>
     <string name="logout">Logout</string>

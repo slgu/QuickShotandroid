@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kzhu9.cache.ImgCache;
 import com.example.kzhu9.config.Config;
 import com.example.kzhu9.fragments.sidebar.CreateTopicsFragment;
 import com.example.kzhu9.fragments.sidebar.MainFragment;
@@ -68,7 +69,15 @@ public class MainActivity extends AppCompatActivity
         TextView profileName = (TextView) header.findViewById(R.id.profile_name);
         profileName.setText(SelfInfo.name);
 
-        new DownloadImage().setHeader(header).execute(SelfInfo.img_uid);
+        String uid = SelfInfo.img_uid;
+        Bitmap cacheRes = ImgCache.single().get(uid);
+        if (cacheRes == null) {
+            new DownloadImage().setHeader(header).setUrl(uid).execute(uid);
+        }
+        else {
+            ImageView img = (ImageView) header.findViewById(R.id.profile_pic);
+            img.setImageBitmap(Bitmap.createScaledBitmap(cacheRes, 180, 180, false));
+        }
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
@@ -80,10 +89,17 @@ public class MainActivity extends AppCompatActivity
             this.header = header;
             return this;
         }
+        String url;
+        public DownloadImage setUrl(String url) {
+            this.url = url;
+            return this;
+        }
         protected Bitmap doInBackground(String... urls) {
             return getBitmapFromURL(urls[0]);
         }
         protected void onPostExecute(Bitmap result) {
+            //set cache
+            ImgCache.single().put(url, result);
             ImageView img = (ImageView) header.findViewById(R.id.profile_pic);
             img.setImageBitmap(Bitmap.createScaledBitmap(result, 180, 180, false));
         }

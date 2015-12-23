@@ -25,7 +25,7 @@
             android:layout_width="223dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:hint="@string/topic_title"
+            android:hint="Shot Title"
             android:textColorHint="@drawable/lightgray"/>
 
         <EditText
@@ -37,7 +37,7 @@
 
             android:layout_gravity="center"
             android:ems="10"
-            android:hint="@string/topic_description"
+            android:hint="Shot Description"
             android:inputType="textMultiLine"
             android:textColorHint="@drawable/lightgray"/>
 
