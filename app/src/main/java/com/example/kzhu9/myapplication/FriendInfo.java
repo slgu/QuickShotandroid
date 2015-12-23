@@ -34,7 +34,7 @@ public class FriendInfo extends AppCompatActivity {
 
         setTitle(name);
 
-        ((TextView) findViewById(R.id.name)).setText(name);
+//        ((TextView) findViewById(R.id.name)).setText(name);
         ((TextView) findViewById(R.id.age)).setText(String.valueOf(age));
         ((TextView) findViewById(R.id.email)).setText(email);
         ((TextView) findViewById(R.id.address)).setText(address);

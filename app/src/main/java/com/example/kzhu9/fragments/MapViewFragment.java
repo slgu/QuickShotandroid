@@ -14,9 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
 
 import org.json.JSONArray;
@@ -54,12 +52,15 @@ public class MapViewFragment extends Fragment {
         GeoJsonLayer layer = new GeoJsonLayer(map, json);
 
         for (TopicItems topicItems: t) {
-            map.addMarker(new MarkerOptions()
-                    .position(new LatLng(Double.parseDouble(topicItems.getLatitude()), Double.parseDouble(topicItems.getLongitude())))
-                    .title(topicItems.getTitle())
-                    .snippet(topicItems.getDescription())
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            System.out.println(topicItems.getUid());
+
+
+//            map.addMarker(new MarkerOptions()
+//                    .position(new LatLng(Double.parseDouble(topicItems.getLatitude()), Double.parseDouble(topicItems.getLongitude())))
+//                    .title(topicItems.getTitle())
+//                    .snippet(topicItems.getDescription())
+//                    .icon(BitmapDescriptorFactory
+//                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
 
         layer.addLayerToMap();

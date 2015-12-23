@@ -61,7 +61,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -75,6 +74,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     ListView searchResults;
     FloatingActionButton fab;
     View rootview;
+    Location location;
     ArrayList<TopicItems> topicResults = new ArrayList<>();
 
     //map for multi request
@@ -95,6 +95,17 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_search, menu);
         inflater.inflate(R.menu.main_location, menu);
+
+        LocationManager lm = (LocationManager) getActivity().getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this.getActivity(),
+                    PERMISSIONS_LOCATION,
+                    REQUEST_EXTERNAL_LOCATION
+            );
+            return;
+        }
+        location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         searchItem = menu.findItem(R.id.action_search);
         search = (SearchView) searchItem.getActionView();
@@ -324,16 +335,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
                 // Step 1.1 get Location information
 
-                LocationManager lm = (LocationManager) getActivity().getBaseContext().getSystemService(Context.LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                            this.getActivity(),
-                            PERMISSIONS_LOCATION,
-                            REQUEST_EXTERNAL_LOCATION
-                    );
-//                    return true;
-                }
-                Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 System.out.println("latitude " + latitude + "+ longitude "+ longitude);
