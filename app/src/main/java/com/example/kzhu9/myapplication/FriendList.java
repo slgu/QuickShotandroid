@@ -42,7 +42,7 @@ public class FriendList {
         return info;
     }
 
-    public static class FriendEntity {
+    public static class FriendEntity implements Comparable <FriendEntity> {
         private String uid;
         private String email;
         private String name;
@@ -53,6 +53,11 @@ public class FriendList {
         private String img_uid;
         private String friends_list;
         private String topics_list;
+
+        @Override
+        public int compareTo(FriendEntity another) {
+            return  name.compareTo(another.name);
+        }
 
         public void setUid(String uid) {
             this.uid = uid;

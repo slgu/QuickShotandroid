@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -55,19 +56,19 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
 
         recyclerView = (RecyclerView) view.findViewById(R.id.friendList);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_friend);
-
-        try {
-            Thread.sleep(500);
-            swipeContainer.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeContainer.setRefreshing(true);
-                    dosomething();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println("createview");
+//        try {
+//            Thread.sleep(500);
+//            swipeContainer.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    swipeContainer.setRefreshing(true);
+//                    dosomething();
+//                }
+//            });
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return view;
     }
 
@@ -91,6 +92,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
     }
 
     public void getFriendUidList() {
+
         String requestURL = Config.REQUESTURL + "/user/get";
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -237,6 +239,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    Collections.sort(friList);
                                     adapter.setList(friList);
                                 }
                             });

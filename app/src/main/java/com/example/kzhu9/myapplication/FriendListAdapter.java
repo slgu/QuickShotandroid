@@ -52,7 +52,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListViewHolder
     @Override
     public void onBindViewHolder(FriendListViewHolder holder, int position) {
         FriendList.FriendEntity friend = list.get(position);
-
         holder.nameText.setText(friend.getName());
         String sex = (friend.getSex() == 0) ? "Male" : "Female";
         holder.sexView.setText(sex);
