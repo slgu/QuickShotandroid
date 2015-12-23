@@ -125,18 +125,28 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                 String responseStr = response.body().string();
 
 
+
                 try {
                     JSONObject responseObj = new JSONObject(responseStr);
-                    JSONObject info = responseObj.getJSONObject("info");
-                    JSONArray friendsListObj = info.getJSONArray("friends_list");
+                    int status = Integer.parseInt(responseObj.get("status").toString());
 
-                    ArrayList<String> uidList = new ArrayList<>();
+                    switch (status) {
+                        case 0:
+                            JSONObject info = responseObj.getJSONObject("info");
+                            JSONArray friendsListObj = info.getJSONArray("friends_list");
 
-                    for (int i = 0; i < friendsListObj.length(); i++) {
-                        uidList.add(friendsListObj.getString(i));
+                            ArrayList<String> uidList = new ArrayList<>();
+
+                            for (int i = 0; i < friendsListObj.length(); i++) {
+                                uidList.add(friendsListObj.getString(i));
+                            }
+                            getFriendList(uidList);
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
                     }
-                    getFriendList(uidList);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -159,10 +169,8 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
             }
         });
 
-
         swipeContainer.setRefreshing(false);
     }
-
 
     @Override
     public void onRefresh() {
@@ -204,6 +212,7 @@ public class FriendListFragment extends Fragment implements FriendItemClickListe
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+                    System.out.println("responseStr "+responseStr);
 
                     JSONObject friendList;
                     JSONObject info;
