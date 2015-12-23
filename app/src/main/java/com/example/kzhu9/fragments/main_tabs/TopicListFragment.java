@@ -215,9 +215,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         JSONObject responseObj = new JSONObject(responseStr);
 
                         JSONObject info = responseObj.getJSONObject("info");
-                        Date date = new Date(info.getString("createAt"));
-                        System.out.println(date.toString());
-                        System.out.println("createAt " + info.getString("createAt"));
+                        Date createAt = new Date(info.getString("createAt"));
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -227,6 +225,7 @@ public class TopicListFragment extends Fragment implements TopicItemClickListene
                         topicEntity.setLat(info.getString("lat"));
                         topicEntity.setLon(info.getString("lon"));
                         topicEntity.setLike(info.getInt("like"));
+                        topicEntity.setCreateAt(createAt);
                         String commentStr = info.getString("comment_list");
                         ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
                         topicEntity.setComments_list(commentList);

@@ -37,11 +37,22 @@ public class TopicList{
         private String image_uid;
         private String video_uid;
         private ArrayList<String> comments_list;
+
+        public Date getCreateAt() {
+            return createAt;
+        }
+
+        public void setCreateAt(Date createAt) {
+            this.createAt = createAt;
+        }
+
         private Date createAt;
+
 
         @Override
         public int compareTo(TopicEntity topicEntity) {
             //write code here for compare name
+            System.out.println("debug compare");
             return  createAt.compareTo(topicEntity.createAt);
         }
 

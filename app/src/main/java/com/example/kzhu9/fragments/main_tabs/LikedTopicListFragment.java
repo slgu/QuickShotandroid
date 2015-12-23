@@ -35,6 +35,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 
 /**
  * Created by jinliang on 11/15/15.
@@ -246,6 +248,7 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
 
                         JSONObject responseObj = new JSONObject(responseStr);
                         JSONObject info = responseObj.getJSONObject("info");
+                        Date createAt = new Date(info.getString("createAt"));
 
                         topicEntity.setUid(info.getString("uid"));
                         topicEntity.setTitle(info.getString("title"));
@@ -254,6 +257,7 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                         topicEntity.setLat(info.getString("lat"));
                         topicEntity.setLon(info.getString("lon"));
                         topicEntity.setLike(info.getInt("like"));
+                        topicEntity.setCreateAt(createAt);
                         String commentStr = info.getString("comment_list");
                         ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
 
@@ -268,6 +272,7 @@ public class LikedTopicListFragment extends Fragment implements TopicItemClickLi
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    Collections.sort(topiList);
                                     adapter.setList(topiList);
                                 }
                             });

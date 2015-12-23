@@ -33,9 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kzhu9.config.Config;
+import com.example.kzhu9.myapplication.LoginActivity;
 import com.example.kzhu9.myapplication.MainActivity;
 import com.example.kzhu9.myapplication.MapActivity;
 import com.example.kzhu9.myapplication.R;
+import com.example.kzhu9.myapplication.SelfInfo;
 import com.example.kzhu9.myapplication.TopicInfo;
 import com.example.kzhu9.myapplication.TopicItems;
 import com.example.kzhu9.myapplication.TopicList;
@@ -330,6 +332,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                 Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
+                System.out.println("latitude " + latitude + "+ longitude "+ longitude);
 
                 // Step 2. Get data
                 requestURL = Config.REQUESTURL + "/topic/find";
@@ -337,6 +340,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         .add("lat", String.valueOf(latitude))
                         .add("lon", String.valueOf(longitude))
                         .build();
+
                 Request request = new Request.Builder()
                         .url(requestURL)
                         .post(formBody)
@@ -374,7 +378,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         System.out.println("Location button clicked");
 
                         try {
-                            JSONArray topicList;
+                            final JSONArray topicList;
                             JSONObject responseObj = new JSONObject(responseStr);
                             topicList = responseObj.getJSONArray("info");
 
@@ -415,9 +419,10 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                     searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-                                            System.out.println(topiList.get(position).getDescription()+" is clicked");
+                                            //spj for wrong uid
+                                            if (topiList.get(position).getUid() == "-1") {
+                                                return;
+                                            }
                                             Intent intent = new Intent(getActivity(), TopicInfo.class);
                                             intent.putExtra("UID", topiList.get(position).getUid());
                                             intent.putExtra("TITLE", topiList.get(position).getTitle());
@@ -427,7 +432,6 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                             intent.putExtra("LAT", topiList.get(position).getLat());
                                             intent.putExtra("LON", topiList.get(position).getLon());
                                             intent.putExtra("COMMENTLIST", topiList.get(position).getComments_list());
-
                                             startActivity(intent);
                                             fab.setVisibility(View.VISIBLE);
                                         }
@@ -466,8 +470,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
 
     public void getTopicList(ArrayList<String> topicUidList) {
         final int size = topicUidList.size();
-//        System.out.println("this is topicUidList size.");
-//        System.out.println(size);
+        System.out.println("this is topicUidList size.");
+        System.out.println(size);
         if (!topiList.isEmpty())
             topiList.clear();
 
@@ -503,68 +507,64 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                         throw new IOException("Unexpected code " + response);
 
                     String responseStr = response.body().string();
+                    System.out.println(responseStr);
 
                     try {
-//                        System.out.println(uid);
-
                         TopicList.TopicEntity topicEntity = new TopicList.TopicEntity();
 
                         JSONObject responseObj = new JSONObject(responseStr);
                         System.out.println("Search Location Topic List Fragment Render Data");
-                        System.out.println(responseObj);
+//                        System.out.println(responseObj);
 
-                        JSONObject info = responseObj.getJSONObject("info");
+                        int status = Integer.parseInt(responseObj.get("status").toString());
+                        switch (status) {
+                            case 0:
+                                JSONObject info = responseObj.getJSONObject("info");
 
-                        topicEntity.setUid(info.getString("uid"));
-                        topicEntity.setTitle(info.getString("title"));
-                        topicEntity.setDescription(info.getString("desc"));
-                        topicEntity.setVideo_uid(info.getString("video_uid"));
-                        topicEntity.setLat(info.getString("lat"));
-                        topicEntity.setLon(info.getString("lon"));
+                                topicEntity.setUid(info.getString("uid"));
+                                topicEntity.setTitle(info.getString("title"));
+                                topicEntity.setDescription(info.getString("desc"));
+                                topicEntity.setVideo_uid(info.getString("video_uid"));
+                                topicEntity.setLat(info.getString("lat"));
+                                topicEntity.setLon(info.getString("lon"));
+                                topicEntity.setLike(info.getInt("like"));
+                                String commentStr = info.getString("comment_list");
+                                ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
+                                topicEntity.setComments_list(commentList);
 
-                        topicEntity.setLike(info.getInt("like"));
-                        String commentStr = info.getString("comment_list");
-                        ArrayList<String> commentList = new ArrayList<String>(Arrays.asList(commentStr.split(",")));
-                        topicEntity.setComments_list(commentList);
+                                topiList.add(topicEntity);
 
-                        topiList.add(topicEntity);
+//                                if (topiList.size() == size) {
+//
+//                                }
+                                break;
+                            case 1:
+                                // terminate the app and relogin
+                                SelfInfo.clear();
 
-                        System.out.println("topiList.size()");
-                        System.out.println(topiList.size());
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
 
+                                getActivity().finish();
+                                break;
+                            case 2:
+                                topicEntity.setUid("-1");
+                                topiList.add(topicEntity);
+                                return;
+                        }
 
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                fab.setVisibility(View.VISIBLE);
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
         }
-
-        while (topiList.size() != size) {
-            try {
-                Thread.sleep(50);
-                System.out.println("Im sleeping");
-                System.out.println("Current size is " +topiList.size());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                System.out.println("in runnable " + topiList.size());
-
-                if (topiList.size() == size) {
-
-                    System.out.println("SearchResultsAdapter called");
-
-                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
-                    fab.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
 
     class SearchResultsAdapter extends BaseAdapter {
