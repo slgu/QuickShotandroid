@@ -75,7 +75,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
     FloatingActionButton fab;
     View rootview;
     Location location;
-    ArrayList<TopicItems> topicResults = new ArrayList<>();
+    ArrayList <TopicList.TopicEntity>  topicResults = new ArrayList<>();
 
     //map for multi request
     ConcurrentHashMap<String, TopicList.TopicEntity> mp = new ConcurrentHashMap<String, TopicList.TopicEntity>();
@@ -226,7 +226,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                             JSONObject responseObj = new JSONObject(responseStr);
                             topicList = responseObj.getJSONArray("info");
 
-                            TopicItems tempTopic;
+                            TopicList.TopicEntity  tempTopic;
 
                             ArrayList<String> uidList = new ArrayList<>();
 
@@ -234,7 +234,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 topicResults.clear();
 
                             for (int i = 0; i < topicList.length(); i++) {
-                                tempTopic = new TopicItems();
+                                tempTopic = new  TopicList.TopicEntity();
 
                                 JSONObject obj = topicList.getJSONObject(i);
 
@@ -387,7 +387,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                             JSONObject responseObj = new JSONObject(responseStr);
                             topicList = responseObj.getJSONArray("info");
 
-                            TopicItems tempTopic;
+                            TopicList.TopicEntity  tempTopic;
 
                             ArrayList<String> uidList = new ArrayList<>();
 
@@ -395,7 +395,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                                 topicResults.clear();
 
                             for (int i = 0; i < topicList.length(); i++) {
-                                tempTopic = new TopicItems();
+                                tempTopic = new  TopicList.TopicEntity();
 
                                 JSONObject obj = topicList.getJSONObject(i);
 
@@ -581,7 +581,7 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topicResults));
+                                    searchResults.setAdapter(new SearchResultsAdapter(getActivity(), topiList));
                                     fab.setVisibility(View.VISIBLE);
                                 }
                             });
@@ -600,13 +600,15 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
         int count;
         Context context;
         private LayoutInflater layoutInflater;
-        private ArrayList<TopicItems> topicDetails = new ArrayList<TopicItems>();
+        private ArrayList<TopicList.TopicEntity> topicDetails = new ArrayList<TopicList.TopicEntity>();
 
         //constructor method
-        public SearchResultsAdapter(Context context, ArrayList<TopicItems> topic_details) {
+        public SearchResultsAdapter(Context context, ArrayList<TopicList.TopicEntity> topic_details) {
             layoutInflater = LayoutInflater.from(context);
-            this.topicDetails = topic_details;
-            this.count = topic_details.size();
+            this.topicDetails.clear();
+            for (int i = 0; i < topic_details.size(); ++i)
+                this.topicDetails.add(topic_details.get(i));
+            this.count = this.topicDetails.size();
             this.context = context;
         }
 
@@ -628,7 +630,8 @@ public class SearchTopicsFragment extends Fragment implements OnMapReadyCallback
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
-            final TopicItems tempTopic = topicDetails.get(position);
+            System.out.println(position + " " + topicDetails.size());
+            final TopicList.TopicEntity tempTopic = topicDetails.get(position);
 
             if (convertView == null) {
                 convertView = layoutInflater.inflate(R.layout.searchtopicresult, null);

@@ -168,7 +168,7 @@ public class SearchUsersFragment extends Fragment {
 
                                             intent.putExtra("NAME", friendResults.get(position).getName());
                                             intent.putExtra("EMAIL", friendResults.get(position).getEmail());
-
+                                            intent.putExtra("TOPIC_LISTS", friendResults.get(position).getTopicList());
                                             startActivity(intent);
                                         }
                                     });
